@@ -11,14 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-indigo: #4f46e5;
-            --primary-violet: #7c3aed;
-            --accent-amber: #f59e0b;
+            --primary-burgundy: #800000;
+            --primary-saffron: #f59e0b;
+            --accent-orange: #ea580c;
             --surface-blur: saturate(180%) blur(20px);
         }
         body {
             font-family: 'Noto Sans Tibetan', 'Microsoft Himalaya', 'Jomolhari', sans-serif;
-            background-color: #f8fafc;
+            background-color: #fffcf9; /* Warmer parchment white */
             color: #1e293b;
             -webkit-font-smoothing: antialiased;
         }
@@ -38,19 +38,19 @@
             width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: #fef2f2;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #fca5a5;
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #ef4444;
         }
         /* Selection and Focus States */
         ::selection {
-            background: rgba(79, 70, 229, 0.15);
-            color: #4338ca;
+            background: rgba(128, 0, 0, 0.15);
+            color: #800000;
         }
         /* Animation utilities */
         @keyframes float {
@@ -62,7 +62,7 @@
             animation: float 6s ease-in-out infinite;
         }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 252, 249, 0.85);
             backdrop-filter: var(--surface-blur);
             -webkit-backdrop-filter: var(--surface-blur);
         }
