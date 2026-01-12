@@ -468,7 +468,7 @@ const App: React.FC = () => {
 
               <div className="flex items-center justify-between px-3 bg-white/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 shadow-xl">
                 <div className="flex items-center gap-2">
-                  {(['ewts', 'tibetan', 'english'] as KeyboardMode[]).map((m) => (
+                  {(['tibetan', 'ewts', 'english'] as KeyboardMode[]).map((m) => (
                     <button
                       key={m}
                       onClick={() => setKeyboardMode(m)}
