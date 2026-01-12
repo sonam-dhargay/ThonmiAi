@@ -15,11 +15,13 @@ import { ewtsToUnicode } from './utils/wylie';
 import { checkTibetanSpelling, SpellResult } from './utils/spellChecker';
 
 type ViewMode = 'chat' | 'about';
+type ThemeMode = 'light' | 'dark';
 
 const App: React.FC = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('chat');
+  const [theme, setTheme] = useState<ThemeMode>('light');
   const [inputValue, setInputValue] = useState('');
   const [wylieBuffer, setWylieBuffer] = useState('');
   const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>('ewts');
@@ -39,6 +41,25 @@ const App: React.FC = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const hasLoadedRef = useRef(false);
+
+  // Theme effect
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('bod_skyad_theme') as ThemeMode | null;
+    const initialTheme = savedTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    setTheme(initialTheme);
+  }, []);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('bod_skyad_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+
   useEffect(() => {
     if (!hasLoadedRef.current) {
       const saved = localStorage.getItem('bod_skyad_sessions');
@@ -321,7 +342,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#fffcf9] overflow-hidden font-sans text-xl">
+    <div className="flex h-screen bg-[#fffcf9] dark:bg-stone-950 overflow-hidden font-sans text-xl transition-colors duration-300">
       <Sidebar
         sessions={sessions}
         activeSessionId={activeSessionId}
@@ -333,24 +354,38 @@ const App: React.FC = () => {
         isOpen={isSidebarOpen}
       />
 
-      <main className="flex-1 flex flex-col relative min-w-0 bg-white">
-        <header className="h-16 border-b border-red-50 glass-panel flex items-center justify-between px-6 sticky top-0 z-20">
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden p-2 hover:bg-red-50 rounded-xl transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          
-          <div className="flex-1 flex justify-center md:justify-start">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-900 to-amber-600 bg-clip-text text-transparent">
+      <main className="flex-1 flex flex-col relative min-w-0 bg-white dark:bg-stone-900 transition-colors duration-300">
+        <header className="h-16 border-b border-red-50 dark:border-stone-800 glass-panel flex items-center justify-between px-6 sticky top-0 z-20">
+          <div className="flex items-center gap-4">
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden p-2 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-900 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-900 to-amber-600 dark:from-red-400 dark:to-amber-400 bg-clip-text text-transparent">
               {TIBETAN_STRINGS.appTitle}
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-amber-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
+              title="Theme Toggle"
+            >
+              {theme === 'light' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              )}
+            </button>
             <button
               onClick={() => setIsWylieGuideOpen(true)}
-              className="p-2.5 text-slate-400 hover:text-red-900 hover:bg-red-50 rounded-xl transition-all"
+              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title={TIBETAN_STRINGS.wylieGuide}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -360,7 +395,7 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => setIsGrammarGuideOpen(true)}
-              className="p-2.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all"
+              className="p-2.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title={TIBETAN_STRINGS.grammarGuide}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -369,7 +404,7 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={() => { setDictionaryInitialTerm(undefined); setIsDictionaryOpen(true); }}
-              className="p-2.5 text-slate-400 hover:text-red-900 hover:bg-red-50 rounded-xl transition-all"
+              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title={TIBETAN_STRINGS.dictionary}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -379,43 +414,43 @@ const App: React.FC = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto relative custom-scrollbar bg-red-50/10">
+        <div className="flex-1 overflow-y-auto relative custom-scrollbar bg-red-50/10 dark:bg-stone-900 transition-colors duration-300">
           {viewMode === 'about' ? (
             <AboutPage />
           ) : !activeSession || activeSession.messages.length === 0 ? (
             <div className="h-full flex flex-col items-center pt-48 md:pt-56 pb-12 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
               <div className="relative mb-16 animate-float shrink-0 z-10">
                 <div className="absolute inset-0 bg-red-500 blur-[120px] opacity-15 rounded-full"></div>
-                <div className="w-44 h-44 bg-gradient-to-br from-red-900 to-amber-700 rounded-[3rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 relative overflow-hidden">
+                <div className="w-44 h-44 bg-gradient-to-br from-red-900 to-amber-700 rounded-[3rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 dark:shadow-stone-950 relative overflow-hidden">
                   <span className="text-8xl md:text-9xl leading-none -mt-10 md:-mt-14">དྷྰི༔</span>
                 </div>
               </div>
-              <h3 className="text-5xl font-bold text-slate-900 mb-6 tracking-tight leading-tight z-10">{TIBETAN_STRINGS.welcomeTitle}</h3>
-              <p className="text-slate-500 max-w-2xl mb-14 text-2xl leading-relaxed font-medium Tibetan-text z-10">{TIBETAN_STRINGS.welcomeSubtitle}</p>
+              <h3 className="text-5xl font-bold text-slate-900 dark:text-stone-100 mb-6 tracking-tight leading-tight z-10">{TIBETAN_STRINGS.welcomeTitle}</h3>
+              <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-14 text-2xl leading-relaxed font-medium Tibetan-text z-10">{TIBETAN_STRINGS.welcomeSubtitle}</p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full relative mb-12 z-10">
                 {examplePrompts.map((prompt, idx) => (
                   <button
                     key={idx}
                     onClick={() => { setInputValue(prompt); textareaRef.current?.focus(); }}
-                    className={`group p-6 bg-white border border-red-50 rounded-[2.2rem] hover:border-amber-200 hover:shadow-2xl transition-all text-left text-slate-700 font-medium text-xl leading-relaxed shadow-sm transform duration-300 hover:-translate-y-1 Tibetan-text ${isRefreshingPrompts ? 'opacity-50 blur-sm' : 'opacity-100'}`}
+                    className={`group p-6 bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-[2.2rem] hover:border-amber-200 dark:hover:border-amber-600 hover:shadow-2xl transition-all text-left text-slate-700 dark:text-stone-300 font-medium text-xl leading-relaxed shadow-sm transform duration-300 hover:-translate-y-1 Tibetan-text ${isRefreshingPrompts ? 'opacity-50 blur-sm' : 'opacity-100'}`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-100 mt-3 group-hover:bg-red-900 transition-colors shrink-0"></div>
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-100 dark:bg-red-900/40 mt-3 group-hover:bg-red-900 dark:group-hover:bg-red-400 transition-colors shrink-0"></div>
                       {prompt}
                     </div>
                   </button>
                 ))}
-                <button onClick={refreshPrompts} disabled={isRefreshingPrompts} className="absolute -top-16 right-4 p-3 text-slate-400 hover:text-red-900 hover:bg-red-50 rounded-full transition-all" title="Refresh">
+                <button onClick={refreshPrompts} disabled={isRefreshingPrompts} className="absolute -top-16 right-4 p-3 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-full transition-all" title="Refresh">
                   <svg xmlns="http://www.w3.org/2000/svg" className={`h-7 w-7 ${isRefreshingPrompts ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </button>
               </div>
-              <div className="flex items-center gap-2 text-slate-400 text-sm font-bold tracking-widest uppercase animate-fade-in opacity-70 z-10">
-                <span className="w-8 h-px bg-red-100"></span>
+              <div className="flex items-center gap-2 text-slate-400 dark:text-stone-500 text-sm font-bold tracking-widest uppercase animate-fade-in opacity-70 z-10">
+                <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
                 {TIBETAN_STRINGS.examplePromptsNote}
-                <span className="w-8 h-px bg-red-100"></span>
+                <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
               </div>
             </div>
           ) : (
@@ -425,13 +460,13 @@ const App: React.FC = () => {
               ))}
               {isLoading && (
                 <div className="flex justify-start mb-10 animate-pulse">
-                  <div className="bg-white border border-red-50 px-8 py-6 rounded-[2rem] rounded-tl-none shadow-md flex items-center gap-5">
+                  <div className="bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 px-8 py-6 rounded-[2rem] rounded-tl-none shadow-md flex items-center gap-5">
                     <div className="flex gap-2.5">
                       <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
                       <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
                       <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
                     </div>
-                    <span className="text-base text-slate-400 font-bold tracking-widest uppercase">{TIBETAN_STRINGS.loading}</span>
+                    <span className="text-base text-slate-400 dark:text-stone-500 font-bold tracking-widest uppercase">{TIBETAN_STRINGS.loading}</span>
                   </div>
                 </div>
               )}
@@ -444,15 +479,15 @@ const App: React.FC = () => {
           <div className="p-6 bg-transparent sticky bottom-0 z-20 pointer-events-none">
             <div className="max-w-4xl mx-auto space-y-4 pointer-events-auto">
               {!spellResult.isValid && keyboardMode !== 'english' && (
-                <div className="animate-slide-up bg-red-50/90 backdrop-blur-md border border-red-100 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50">
-                  <div className="flex items-center gap-3 mb-2 text-red-600 font-bold text-xs uppercase tracking-widest">
+                <div className="animate-slide-up bg-red-50/90 dark:bg-stone-900/90 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50 dark:shadow-black/50">
+                  <div className="flex items-center gap-3 mb-2 text-red-600 dark:text-red-400 font-bold text-xs uppercase tracking-widest">
                     <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
                     {TIBETAN_STRINGS.spellCheckFail}
                   </div>
                   <ul className="space-y-1">
                     {spellResult.errors.map((err, i) => (
-                      <li key={i} className="text-red-700 text-base font-medium Tibetan-text pl-5 relative">
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-red-300 rounded-full"></span>
+                      <li key={i} className="text-red-700 dark:text-red-300 text-base font-medium Tibetan-text pl-5 relative">
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-red-300 dark:bg-red-700 rounded-full"></span>
                         {err}
                       </li>
                     ))}
@@ -466,13 +501,13 @@ const App: React.FC = () => {
                 isVisible={keyboardMode !== 'english'}
               />
 
-              <div className="flex items-center justify-between px-3 bg-white/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 shadow-xl">
+              <div className="flex items-center justify-between px-3 bg-white/70 dark:bg-stone-800/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 dark:border-stone-700 shadow-xl transition-colors duration-300">
                 <div className="flex items-center gap-2">
                   {(['tibetan', 'ewts', 'english'] as KeyboardMode[]).map((m) => (
                     <button
                       key={m}
                       onClick={() => setKeyboardMode(m)}
-                      className={`text-[11px] px-4 py-2 rounded-xl font-bold transition-all ${keyboardMode === m ? 'bg-red-900 text-white shadow-lg' : 'text-slate-500 hover:bg-white hover:shadow-sm'}`}
+                      className={`text-[11px] px-4 py-2 rounded-xl font-bold transition-all ${keyboardMode === m ? 'bg-red-900 dark:bg-red-700 text-white shadow-lg' : 'text-slate-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 hover:shadow-sm'}`}
                     >
                       {m === 'ewts' ? TIBETAN_STRINGS.kbEwts : m === 'tibetan' ? TIBETAN_STRINGS.kbTibetan : TIBETAN_STRINGS.kbEnglish}
                     </button>
@@ -482,7 +517,7 @@ const App: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setIsImageMode(!isImageMode)} 
-                    className={`p-2.5 rounded-xl transition-all ${isImageMode ? 'bg-amber-100 text-amber-600 shadow-inner' : 'text-slate-400 hover:bg-red-50'}`}
+                    className={`p-2.5 rounded-xl transition-all ${isImageMode ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}
                     title={TIBETAN_STRINGS.imageGen}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -490,7 +525,7 @@ const App: React.FC = () => {
                     </svg>
                   </button>
 
-                  <button onClick={() => setShowVirtualKeyboard(!showVirtualKeyboard)} className={`p-2.5 rounded-xl transition-all ${showVirtualKeyboard ? 'bg-red-100 text-red-900 shadow-inner' : 'text-slate-400 hover:bg-red-50'}`}>
+                  <button onClick={() => setShowVirtualKeyboard(!showVirtualKeyboard)} className={`p-2.5 rounded-xl transition-all ${showVirtualKeyboard ? 'bg-red-100 dark:bg-stone-700 text-red-900 dark:text-stone-100 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
@@ -507,13 +542,13 @@ const App: React.FC = () => {
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
                     placeholder={isImageMode ? TIBETAN_STRINGS.imageGenPlaceholder : (keyboardMode === 'ewts' ? TIBETAN_STRINGS.wyliePlaceholder : TIBETAN_STRINGS.inputPlaceholder)}
                     rows={1}
-                    className={`w-full bg-white border ${isImageMode ? 'border-amber-200 ring-amber-50' : (!spellResult.isValid && keyboardMode !== 'english' ? 'border-red-200 ring-red-100' : 'border-red-100 ring-red-900/5')} focus:border-red-900 focus:ring-8 rounded-[2.5rem] py-6 pl-8 pr-20 text-2xl outline-none transition-all resize-none shadow-2xl Tibetan-text`}
+                    className={`w-full bg-white dark:bg-stone-800 border ${isImageMode ? 'border-amber-200 dark:border-amber-700 ring-amber-50 dark:ring-amber-900/20' : (!spellResult.isValid && keyboardMode !== 'english' ? 'border-red-200 dark:border-red-900/50 ring-red-100 dark:ring-red-900/10' : 'border-red-100 dark:border-stone-700 ring-red-900/5 dark:ring-stone-400/5')} focus:border-red-900 dark:focus:border-red-600 focus:ring-8 rounded-[2.5rem] py-6 pl-8 pr-20 text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl dark:shadow-black/50 Tibetan-text`}
                     style={{ minHeight: '84px' }}
                   />
                   <button
                     type="submit"
                     disabled={isLoading || !inputValue.trim()}
-                    className={`absolute right-3.5 bottom-3.5 p-4 text-white rounded-[1.8rem] transition-all shadow-xl active:scale-90 ${isImageMode ? 'bg-amber-500 hover:bg-amber-600' : 'bg-red-900 hover:bg-red-800'} disabled:bg-slate-100 disabled:text-slate-300`}
+                    className={`absolute right-3.5 bottom-3.5 p-4 text-white rounded-[1.8rem] transition-all shadow-xl active:scale-90 ${isImageMode ? 'bg-amber-500 hover:bg-amber-600' : 'bg-red-900 hover:bg-red-800 dark:bg-red-700 dark:hover:bg-red-600'} disabled:bg-slate-100 dark:disabled:bg-stone-800 disabled:text-slate-300 dark:disabled:text-stone-600`}
                     aria-label="Send Message"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">

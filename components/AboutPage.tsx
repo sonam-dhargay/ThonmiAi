@@ -29,13 +29,13 @@ const AboutPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-14 px-7">
-      <div className="bg-white rounded-[2.5rem] shadow-xl p-10 md:p-14 border border-red-50 relative">
+    <div className="max-w-4xl mx-auto py-14 px-7 transition-colors duration-300">
+      <div className="bg-white dark:bg-stone-800 rounded-[2.5rem] shadow-xl p-10 md:p-14 border border-red-50 dark:border-stone-700 relative transition-colors duration-300">
         <div className="absolute top-8 right-8 flex gap-2">
           {!isEditing ? (
             <button 
               onClick={() => setIsEditing(true)}
-              className="p-2.5 text-slate-400 hover:text-red-900 hover:bg-red-50 rounded-full transition-all"
+              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700 rounded-full transition-all"
               title="Edit Page"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -46,7 +46,7 @@ const AboutPage: React.FC = () => {
             <>
               <button 
                 onClick={handleSave}
-                className="p-2.5 text-green-600 hover:bg-green-50 rounded-full transition-all"
+                className="p-2.5 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-full transition-all"
                 title="Save"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,7 +55,7 @@ const AboutPage: React.FC = () => {
               </button>
               <button 
                 onClick={handleCancel}
-                className="p-2.5 text-red-600 hover:bg-red-50 rounded-full transition-all"
+                className="p-2.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all"
                 title="Cancel"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +66,7 @@ const AboutPage: React.FC = () => {
           )}
         </div>
 
-        <div className="w-28 h-28 bg-red-900 rounded-[2.2rem] flex items-center justify-center text-white mb-12 shadow-xl shadow-red-100 overflow-hidden">
+        <div className="w-28 h-28 bg-red-900 dark:bg-red-800 rounded-[2.2rem] flex items-center justify-center text-white mb-12 shadow-xl shadow-red-100 dark:shadow-black overflow-hidden">
           <span className="text-7xl leading-none -mt-8">དྷྰི༔</span>
         </div>
 
@@ -75,35 +75,35 @@ const AboutPage: React.FC = () => {
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-4xl font-bold text-slate-900 border-b-2 border-red-200 focus:border-red-900 outline-none pb-3 bg-transparent"
+              className="w-full text-4xl font-bold text-slate-900 dark:text-stone-100 border-b-2 border-red-200 dark:border-stone-700 focus:border-red-900 dark:focus:border-red-600 outline-none pb-3 bg-transparent"
             />
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="w-full h-96 text-2xl text-slate-700 leading-relaxed font-medium p-5 border border-red-50 rounded-2xl focus:ring-2 focus:ring-red-900 outline-none transition-all resize-none Tibetan-text"
+              className="w-full h-96 text-2xl text-slate-700 dark:text-stone-200 leading-relaxed font-medium p-5 border border-red-50 dark:border-stone-700 rounded-2xl focus:ring-2 focus:ring-red-900 dark:focus:ring-red-600 outline-none transition-all resize-none dark:bg-stone-900 Tibetan-text"
             />
           </div>
         ) : (
           <>
-            <h1 className="text-4xl font-bold text-slate-900 mb-10 leading-tight">
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-stone-100 mb-10 leading-tight">
               {title}
             </h1>
-            <div className="prose prose-xl prose-slate max-w-none">
-              <p className="text-2xl text-slate-700 leading-relaxed whitespace-pre-wrap font-medium Tibetan-text">
+            <div className="prose prose-xl prose-slate dark:prose-invert max-w-none">
+              <p className="text-2xl text-slate-700 dark:text-stone-200 leading-relaxed whitespace-pre-wrap font-medium Tibetan-text">
                 {content}
               </p>
             </div>
           </>
         )}
         
-        <div className="mt-14 pt-10 border-t border-red-50 grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="mt-14 pt-10 border-t border-red-50 dark:border-stone-700 grid grid-cols-1 md:grid-cols-2 gap-10">
           <div>
-            <h3 className="text-xl font-bold text-slate-800 mb-4">{TIBETAN_STRINGS.aboutMainGoal}</h3>
-            <p className="text-lg text-slate-600 leading-relaxed Tibetan-text">{TIBETAN_STRINGS.aboutMainGoalDesc}</p>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-4">{TIBETAN_STRINGS.aboutMainGoal}</h3>
+            <p className="text-lg text-slate-600 dark:text-stone-400 leading-relaxed Tibetan-text">{TIBETAN_STRINGS.aboutMainGoalDesc}</p>
           </div>
           <div>
-            <h3 className="text-xl font-bold text-slate-800 mb-4">{TIBETAN_STRINGS.aboutUsers}</h3>
-            <p className="text-lg text-slate-600 leading-relaxed Tibetan-text">{TIBETAN_STRINGS.aboutUsersDesc}</p>
+            <h3 className="text-xl font-bold text-slate-800 dark:text-stone-200 mb-4">{TIBETAN_STRINGS.aboutUsers}</h3>
+            <p className="text-lg text-slate-600 dark:text-stone-400 leading-relaxed Tibetan-text">{TIBETAN_STRINGS.aboutUsersDesc}</p>
           </div>
         </div>
       </div>

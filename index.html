@@ -9,6 +9,27 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tibetan:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        burgundy: {
+                            DEFAULT: '#800000',
+                            light: '#991b1b',
+                            dark: '#450a0a'
+                        },
+                        saffron: {
+                            DEFAULT: '#f59e0b',
+                            light: '#fbbf24',
+                            dark: '#b45309'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
             --primary-burgundy: #800000;
@@ -21,6 +42,11 @@
             background-color: #fffcf9; /* Warmer parchment white */
             color: #1e293b;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .dark body {
+            background-color: #0c0a09;
+            color: #e7e5e4;
         }
         /* Enhanced Tibetan Typography */
         .Tibetan-text {
@@ -40,9 +66,15 @@
         ::-webkit-scrollbar-track {
             background: #fef2f2;
         }
+        .dark ::-webkit-scrollbar-track {
+            background: #1c1917;
+        }
         ::-webkit-scrollbar-thumb {
             background: #fca5a5;
             border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #44403c;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #ef4444;
@@ -51,6 +83,10 @@
         ::selection {
             background: rgba(128, 0, 0, 0.15);
             color: #800000;
+        }
+        .dark ::selection {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
         }
         /* Animation utilities */
         @keyframes float {
@@ -65,6 +101,9 @@
             background: rgba(255, 252, 249, 0.85);
             backdrop-filter: var(--surface-blur);
             -webkit-backdrop-filter: var(--surface-blur);
+        }
+        .dark .glass-panel {
+            background: rgba(12, 10, 9, 0.8);
         }
         .prose p {
             margin-top: 1.25em;

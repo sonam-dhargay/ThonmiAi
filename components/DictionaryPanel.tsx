@@ -24,6 +24,10 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   const [isDeepLoading, setIsDeepLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newEntry, setNewEntry] = useState<Partial<DictionaryEntry>>({});
+  
+  // Drag and Drop state
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const savedReg = localStorage.getItem('bod_skyad_dictionary_reg');
@@ -77,7 +81,8 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
 
   const currentDict = activeDict === 'regular' ? regularDict : terminologyDict;
 
-  const filteredEntries = currentDict
+  // Sorting logic: Manual for terminology unless searching. Alphabetical for Regular.
+  const filteredEntries = [...currentDict]
     .filter(entry => {
       const s = searchTerm.toLowerCase();
       const matchesSearch = 
@@ -87,13 +92,19 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
       return matchesSearch;
     })
     .sort((a, b) => {
-      if (activeDict === 'terminology') {
-        const termA = a.englishTerm?.toLowerCase() || '';
-        const termB = b.englishTerm?.toLowerCase() || '';
-        return termA.localeCompare(termB);
-      } else {
-        return a.term.localeCompare(b.term, 'bo');
+      if (searchTerm) {
+        // When searching, use alphabetical for both
+        if (activeDict === 'terminology') {
+          const termA = a.englishTerm?.toLowerCase() || '';
+          const termB = b.englishTerm?.toLowerCase() || '';
+          return termA.localeCompare(termB);
+        } else {
+          return a.term.localeCompare(b.term, 'bo');
+        }
       }
+      // When NOT searching:
+      if (activeDict === 'terminology') return 0; // Maintain manual/array order
+      return a.term.localeCompare(b.term, 'bo'); // Regular stays alphabetical
     });
 
   const handleAddTerm = () => {
@@ -118,6 +129,45 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   const handleDeleteTerm = (term: string, englishTerm?: string) => {
     if (activeDict === 'regular') setRegularDict(prev => prev.filter(e => e.term !== term));
     else setTerminologyDict(prev => prev.filter(e => e.term !== term || e.englishTerm !== englishTerm));
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    if (activeDict !== 'terminology' || searchTerm) return;
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    // Small delay to hide the original element in the DOM while dragging
+    setTimeout(() => {
+      const target = e.target as HTMLElement;
+      target.style.opacity = '0.3';
+    }, 0);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    const target = e.target as HTMLElement;
+    target.style.opacity = '1';
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
+
+    const updatedList = [...terminologyDict];
+    const draggedItem = updatedList[draggedIndex];
+    updatedList.splice(draggedIndex, 1);
+    updatedList.splice(targetIndex, 0, draggedItem);
+
+    setTerminologyDict(updatedList);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleDeepLookup = async () => {
@@ -151,24 +201,24 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-80 md:w-[30rem] glass-panel shadow-[-15px_0_60px_rgba(0,0,0,0.12)] z-50 flex flex-col border-l border-red-100/40 animate-slide-in">
-      <div className="p-7 border-b border-red-50/50 flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-           <span className={`w-2.5 h-2.5 rounded-full shadow-lg ${activeDict === 'regular' ? 'bg-red-800 shadow-red-100' : 'bg-amber-600 shadow-amber-100'}`}></span>
+    <div className="fixed inset-y-0 right-0 w-80 md:w-[30rem] glass-panel dark:bg-stone-950/90 shadow-[-15px_0_60px_rgba(0,0,0,0.12)] z-50 flex flex-col border-l border-red-100/40 dark:border-stone-800 animate-slide-in transition-colors duration-300">
+      <div className="p-7 border-b border-red-50/50 dark:border-stone-800 flex items-center justify-between">
+        <h3 className="text-2xl font-bold text-slate-800 dark:text-stone-100 flex items-center gap-3">
+           <span className={`w-2.5 h-2.5 rounded-full shadow-lg ${activeDict === 'regular' ? 'bg-red-800 dark:bg-red-600 shadow-red-100' : 'bg-amber-600 dark:bg-amber-500 shadow-amber-100'}`}></span>
            {activeDict === 'regular' ? TIBETAN_STRINGS.dictionary : TIBETAN_STRINGS.terminologyDict}
         </h3>
-        <button onClick={onClose} className="p-2.5 hover:bg-white hover:shadow-md rounded-full transition-all text-slate-400 hover:text-red-900">
+        <button onClick={onClose} className="p-2.5 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md rounded-full transition-all text-slate-400 hover:text-red-900 dark:hover:text-red-400">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
 
-      <div className="flex px-5 py-2.5 gap-1.5 bg-red-50/30 mx-6 mt-4 rounded-2xl border border-red-50/50 shadow-inner">
+      <div className="flex px-5 py-2.5 gap-1.5 bg-red-50/30 dark:bg-stone-900 mx-6 mt-4 rounded-2xl border border-red-50/50 dark:border-stone-800 shadow-inner">
         <button
           onClick={() => setActiveDict('regular')}
           className={`flex-1 py-2.5 text-sm font-bold transition-all rounded-xl ${
-            activeDict === 'regular' ? 'bg-white shadow-md text-red-900' : 'text-slate-400 hover:text-slate-600'
+            activeDict === 'regular' ? 'bg-white dark:bg-stone-800 shadow-md text-red-900 dark:text-red-400' : 'text-slate-400 dark:text-stone-600 hover:text-slate-600 dark:hover:text-stone-400'
           }`}
         >
           {TIBETAN_STRINGS.dictionary}
@@ -176,7 +226,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
         <button
           onClick={() => setActiveDict('terminology')}
           className={`flex-1 py-2.5 text-sm font-bold transition-all rounded-xl ${
-            activeDict === 'terminology' ? 'bg-white shadow-md text-red-900' : 'text-slate-400 hover:text-slate-600'
+            activeDict === 'terminology' ? 'bg-white dark:bg-stone-800 shadow-md text-red-900 dark:text-red-400' : 'text-slate-400 dark:text-stone-600 hover:text-slate-600 dark:hover:text-stone-400'
           }`}
         >
           {TIBETAN_STRINGS.terminologyDict}
@@ -187,13 +237,13 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
         <div className="flex items-center gap-2 mb-3 px-1">
           <button 
             onClick={() => {setSearchMode('tibetan'); setWylieSearchBuffer('');}}
-            className={`text-[10px] px-3 py-1.5 rounded-lg font-bold transition-all uppercase tracking-wider ${searchMode === 'tibetan' ? 'bg-red-900 text-white shadow-md' : 'bg-red-50 text-red-800 hover:bg-red-100'}`}
+            className={`text-[10px] px-3 py-1.5 rounded-lg font-bold transition-all uppercase tracking-wider ${searchMode === 'tibetan' ? 'bg-red-900 dark:bg-red-700 text-white shadow-md' : 'bg-red-50 dark:bg-stone-900 text-red-800 dark:text-stone-400 hover:bg-red-100'}`}
           >
             {TIBETAN_STRINGS.kbTibetan}
           </button>
           <button 
             onClick={() => setSearchMode('ewts')}
-            className={`text-[10px] px-3 py-1.5 rounded-lg font-bold transition-all uppercase tracking-wider ${searchMode === 'ewts' ? 'bg-red-900 text-white shadow-md' : 'bg-red-50 text-red-800 hover:bg-red-100'}`}
+            className={`text-[10px] px-3 py-1.5 rounded-lg font-bold transition-all uppercase tracking-wider ${searchMode === 'ewts' ? 'bg-red-900 dark:bg-red-700 text-white shadow-md' : 'bg-red-50 dark:bg-stone-900 text-red-800 dark:text-stone-400 hover:bg-red-100'}`}
           >
             Wylie
           </button>
@@ -205,15 +255,15 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder={searchMode === 'ewts' ? TIBETAN_STRINGS.wyliePlaceholder : TIBETAN_STRINGS.searchPlaceholder}
-            className="w-full pl-14 pr-6 py-4.5 bg-red-50/50 focus:bg-white border-2 border-transparent focus:border-red-900 rounded-[1.8rem] outline-none transition-all text-xl font-medium shadow-inner Tibetan-text"
+            className="w-full pl-14 pr-6 py-4.5 bg-red-50/50 dark:bg-stone-900 focus:bg-white dark:focus:bg-stone-800 border-2 border-transparent focus:border-red-900 dark:focus:border-red-700 rounded-[1.8rem] outline-none transition-all text-xl font-medium shadow-inner dark:text-stone-100 Tibetan-text"
           />
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute left-5 top-4.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute left-5 top-4.5 text-slate-300 dark:text-stone-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
 
         {showAddForm ? (
-          <div className="bg-white p-6 rounded-[2rem] border-2 border-red-50 mb-8 animate-slide-up shadow-2xl shadow-red-50/50 overflow-y-auto max-h-[60vh]">
+          <div className="bg-white dark:bg-stone-800 p-6 rounded-[2rem] border-2 border-red-50 dark:border-stone-700 mb-8 animate-slide-up shadow-2xl shadow-red-50/50 dark:shadow-black/50 overflow-y-auto max-h-[60vh] transition-colors duration-300">
             <div className="space-y-4">
               {activeDict === 'terminology' && (
                 <div className="space-y-1">
@@ -222,7 +272,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
                     value={newEntry.englishTerm || ''}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, englishTerm: e.target.value }))}
                     placeholder="English Term"
-                    className="w-full p-3 bg-red-50 border border-red-50 rounded-2xl outline-none text-lg font-bold focus:bg-white focus:border-red-900 transition-all"
+                    className="w-full p-3 bg-red-50 dark:bg-stone-900 border border-red-50 dark:border-stone-700 rounded-2xl outline-none text-lg font-bold focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all dark:text-stone-100"
                   />
                 </div>
               )}
@@ -232,7 +282,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
                   value={newEntry.term || ''}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, term: e.target.value }))}
                   placeholder="མིང་།"
-                  className="w-full p-3 bg-red-50 border border-red-50 rounded-2xl outline-none text-2xl font-bold focus:bg-white focus:border-red-900 transition-all"
+                  className="w-full p-3 bg-red-50 dark:bg-stone-900 border border-red-50 dark:border-stone-700 rounded-2xl outline-none text-2xl font-bold focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all dark:text-stone-100"
                 />
               </div>
               <div className="space-y-1">
@@ -242,19 +292,19 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
                   onChange={(e) => setNewEntry(prev => ({ ...prev, definition: e.target.value }))}
                   placeholder="འགྲེལ་བཤད།"
                   rows={4}
-                  className="w-full p-3 bg-red-50 border border-red-50 rounded-2xl outline-none text-lg focus:bg-white focus:border-red-900 transition-all resize-none Tibetan-text"
+                  className="w-full p-3 bg-red-50 dark:bg-stone-900 border border-red-50 dark:border-stone-700 rounded-2xl outline-none text-lg focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all resize-none dark:text-stone-200 Tibetan-text"
                 />
               </div>
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={handleAddTerm}
-                  className="flex-1 py-3.5 bg-gradient-to-r from-red-900 to-red-800 text-white rounded-[1.2rem] font-bold shadow-xl shadow-red-100 hover:shadow-red-200 active:scale-95 transition-all"
+                  className="flex-1 py-3.5 bg-gradient-to-r from-red-900 to-red-800 dark:from-red-700 dark:to-red-600 text-white rounded-[1.2rem] font-bold shadow-xl shadow-red-100 dark:shadow-black hover:shadow-red-200 active:scale-95 transition-all"
                 >
                   {TIBETAN_STRINGS.saveToDict}
                 </button>
                 <button
                   onClick={() => setShowAddForm(false)}
-                  className="px-5 py-3.5 bg-red-50 text-red-500 rounded-[1.2rem] font-bold hover:bg-red-100 transition-all"
+                  className="px-5 py-3.5 bg-red-50 dark:bg-stone-700 text-red-500 dark:text-red-400 rounded-[1.2rem] font-bold hover:bg-red-100 dark:hover:bg-stone-600 transition-all"
                 >
                   ✖
                 </button>
@@ -264,7 +314,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
         ) : (
           <button
             onClick={() => setShowAddForm(true)}
-            className="w-full py-4 mb-8 bg-white border-2 border-dashed border-red-50 text-red-200 rounded-[1.8rem] hover:border-red-400 hover:text-red-900 font-bold transition-all text-sm group"
+            className="w-full py-4 mb-8 bg-white dark:bg-stone-800 border-2 border-dashed border-red-50 dark:border-stone-700 text-red-200 dark:text-stone-600 rounded-[1.8rem] hover:border-red-400 dark:hover:border-red-800 hover:text-red-900 dark:hover:text-red-400 font-bold transition-all text-sm group"
           >
             <span className="inline-block group-hover:scale-125 transition-transform mr-2">+</span> {TIBETAN_STRINGS.addTerm}
           </button>
@@ -272,37 +322,67 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
 
         <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
           {filteredEntries.length > 0 ? (
-            filteredEntries.map((entry, idx) => (
-              <div key={idx} className="p-6 bg-white border border-red-50 rounded-[2.2rem] shadow-sm group hover:border-red-100 hover:shadow-xl transition-all transform hover:-translate-y-1 duration-300">
-                <div className="flex flex-col gap-1 mb-3">
-                  {entry.englishTerm && (
-                    <span className="text-sm font-bold text-amber-600 tracking-wide uppercase">{entry.englishTerm}</span>
+            filteredEntries.map((entry, idx) => {
+              // We need the original index for reordering to work correctly
+              const actualIndex = terminologyDict.findIndex(e => e.term === entry.term && e.englishTerm === entry.englishTerm);
+              const isTerminology = activeDict === 'terminology';
+              const canDrag = isTerminology && !searchTerm;
+
+              return (
+                <div 
+                  key={`${entry.term}-${idx}`}
+                  draggable={canDrag}
+                  onDragStart={(e) => handleDragStart(e, actualIndex)}
+                  onDragOver={(e) => handleDragOver(e, actualIndex)}
+                  onDragEnd={handleDragEnd}
+                  onDrop={(e) => handleDrop(e, actualIndex)}
+                  className={`relative p-6 bg-white dark:bg-stone-800 border rounded-[2.2rem] shadow-sm group transition-all transform duration-300 ${
+                    dragOverIndex === actualIndex && draggedIndex !== actualIndex ? 'border-amber-500 dark:border-amber-600 scale-[1.02] shadow-amber-100 dark:shadow-black shadow-xl' : 'border-red-50 dark:border-stone-700 hover:border-red-100 dark:hover:border-red-800 hover:shadow-xl hover:-translate-y-1'
+                  }`}
+                >
+                  {canDrag && (
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-red-200 dark:text-stone-700 group-hover:text-red-800 dark:group-hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 pr-2">
+                      <svg width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="4" cy="4" r="2" fill="currentColor"/>
+                        <circle cx="4" cy="12" r="2" fill="currentColor"/>
+                        <circle cx="4" cy="20" r="2" fill="currentColor"/>
+                        <circle cx="12" cy="4" r="2" fill="currentColor"/>
+                        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                        <circle cx="12" cy="20" r="2" fill="currentColor"/>
+                      </svg>
+                    </div>
                   )}
-                  <h4 className="text-2xl font-bold text-slate-900 leading-tight group-hover:text-red-900 transition-colors">{entry.term}</h4>
+
+                  <div className={`flex flex-col gap-1 mb-3 ${canDrag ? 'ml-4' : ''}`}>
+                    {entry.englishTerm && (
+                      <span className="text-sm font-bold text-amber-600 dark:text-amber-500 tracking-wide uppercase">{entry.englishTerm}</span>
+                    )}
+                    <h4 className="text-2xl font-bold text-slate-900 dark:text-stone-100 leading-tight group-hover:text-red-900 dark:group-hover:text-red-400 transition-colors">{entry.term}</h4>
+                  </div>
+                  <div className={`prose prose-sm prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-stone-400 leading-relaxed Tibetan-text ${canDrag ? 'ml-4' : ''}`}>
+                    {entry.definition}
+                  </div>
+                  {entry.isUserAdded && (
+                    <button 
+                      onClick={() => handleDeleteTerm(entry.term, entry.englishTerm)}
+                      className={`mt-5 text-[10px] text-red-400 dark:text-red-600 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-2 font-bold uppercase tracking-widest ${canDrag ? 'ml-4' : ''}`}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      གསུབ་པ།
+                    </button>
+                  )}
                 </div>
-                <div className="prose prose-sm prose-slate max-w-none text-slate-600 leading-relaxed Tibetan-text">
-                   {entry.definition}
-                </div>
-                {entry.isUserAdded && (
-                  <button 
-                    onClick={() => handleDeleteTerm(entry.term, entry.englishTerm)}
-                    className="mt-5 text-[10px] text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-2 font-bold uppercase tracking-widest"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    གསུབ་པ།
-                  </button>
-                )}
-              </div>
-            ))
+              );
+            })
           ) : searchTerm ? (
-            <div className="text-center py-20 bg-red-50/20 rounded-[2.5rem] border border-red-50">
-              <p className="text-slate-400 mb-8 text-sm font-bold tracking-wide">{TIBETAN_STRINGS.noDefinition}</p>
+            <div className="text-center py-20 bg-red-50/20 dark:bg-stone-800/20 rounded-[2.5rem] border border-red-50 dark:border-stone-800 transition-colors duration-300">
+              <p className="text-slate-400 dark:text-stone-600 mb-8 text-sm font-bold tracking-wide">{TIBETAN_STRINGS.noDefinition}</p>
               <button 
                 onClick={handleDeepLookup}
                 disabled={isDeepLoading}
-                className="mx-auto py-4 px-10 bg-red-900 text-white rounded-[1.5rem] hover:bg-red-800 transition-all disabled:opacity-50 flex items-center gap-3 shadow-xl shadow-red-100 font-bold active:scale-95"
+                className="mx-auto py-4 px-10 bg-red-900 dark:bg-red-700 text-white rounded-[1.5rem] hover:bg-red-800 dark:hover:bg-red-600 transition-all disabled:opacity-50 flex items-center gap-3 shadow-xl shadow-red-100 dark:shadow-black font-bold active:scale-95"
               >
                  {isDeepLoading && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}
                  {TIBETAN_STRINGS.deepLookup}
@@ -310,12 +390,12 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
             </div>
           ) : (
             <div className="text-center py-24 opacity-30">
-               <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-900/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <div className="w-24 h-24 bg-red-50 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto mb-8 transition-colors duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-900/30 dark:text-stone-400/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                </div>
-               <p className="text-base font-bold text-slate-400 tracking-wide uppercase">{TIBETAN_STRINGS.dictInitialHint}</p>
+               <p className="text-base font-bold text-slate-400 dark:text-stone-600 tracking-wide uppercase">{TIBETAN_STRINGS.dictInitialHint}</p>
             </div>
           )}
         </div>

@@ -27,12 +27,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onFeedback, onSaveTo
       <div
         className={`max-w-[85%] md:max-w-[75%] px-7 py-5 rounded-3xl relative group transition-all duration-300 ${
           isUser
-            ? 'bg-gradient-to-br from-red-900 to-amber-800 text-white rounded-tr-none shadow-xl shadow-red-100'
-            : 'bg-white text-slate-800 border border-red-50 rounded-tl-none shadow-md hover:shadow-lg'
+            ? 'bg-gradient-to-br from-red-900 to-amber-800 dark:from-red-800 dark:to-red-950 text-white rounded-tr-none shadow-xl shadow-red-100 dark:shadow-black'
+            : 'bg-white dark:bg-stone-800 text-slate-800 dark:text-stone-200 border border-red-50 dark:border-stone-700 rounded-tl-none shadow-md hover:shadow-lg transition-colors'
         }`}
       >
         {message.imageUrl && (
-          <div className="mb-4 overflow-hidden rounded-2xl shadow-inner border border-red-50">
+          <div className="mb-4 overflow-hidden rounded-2xl shadow-inner border border-red-50 dark:border-stone-700">
             <img 
               src={message.imageUrl} 
               alt="Generated Content" 
@@ -42,20 +42,20 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onFeedback, onSaveTo
           </div>
         )}
         
-        <div className={`prose prose-xl ${isUser ? 'prose-invert' : 'prose-red'} max-w-none Tibetan-text leading-relaxed`}>
+        <div className={`prose prose-xl ${isUser ? 'prose-invert' : 'prose-red dark:prose-invert'} max-w-none Tibetan-text leading-relaxed`}>
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {message.content}
           </ReactMarkdown>
         </div>
 
         {!isUser && (
-          <div className="mt-4 pt-3 border-t border-red-50 text-[11px] text-slate-400 font-medium italic opacity-70 Tibetan-text leading-tight">
+          <div className="mt-4 pt-3 border-t border-red-50 dark:border-stone-700 text-[11px] text-slate-400 dark:text-stone-500 font-medium italic opacity-70 Tibetan-text leading-tight">
             {TIBETAN_STRINGS.aiCaveat}
           </div>
         )}
         
-        <div className={`flex items-center justify-between mt-5 pt-4 border-t ${isUser ? 'border-white/10 flex-row-reverse' : 'border-red-50 flex-row'}`}>
-          <div className={`text-[11px] font-bold tracking-wider opacity-60 ${isUser ? 'text-right' : 'text-left'}`}>
+        <div className={`flex items-center justify-between mt-5 pt-4 border-t ${isUser ? 'border-white/10 flex-row-reverse' : 'border-red-50 dark:border-stone-700 flex-row'}`}>
+          <div className={`text-[11px] font-bold tracking-wider opacity-60 ${isUser ? 'text-right' : 'text-left'} text-slate-400 dark:text-stone-500`}>
             {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
 
@@ -63,7 +63,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onFeedback, onSaveTo
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-y-1 group-hover:translate-y-0">
               <button
                 onClick={handleCopy}
-                className={`p-1.5 rounded-lg transition-all ${copied ? 'text-green-600 bg-green-50' : 'text-slate-400 hover:text-red-900 hover:bg-red-50'}`}
+                className={`p-1.5 rounded-lg transition-all ${copied ? 'text-green-600 bg-green-50 dark:bg-green-900/20' : 'text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}
                 title={copied ? "བཤུས་ཟིན།" : "བཤུ་བ།"}
               >
                 {copied ? (
@@ -80,7 +80,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onFeedback, onSaveTo
               {onSaveToDict && (
                 <button
                   onClick={() => onSaveToDict(message.content)}
-                  className="p-1.5 rounded-lg hover:bg-red-50 transition-all text-slate-400 hover:text-red-900"
+                  className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-stone-700 transition-all text-slate-400 hover:text-red-900 dark:hover:text-red-400"
                   title="ཚིག་མཛོད་དུ་ཉར་བ།"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,10 +89,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onFeedback, onSaveTo
                 </button>
               )}
               {onFeedback && (
-                <div className="flex items-center gap-0.5 bg-red-50/50 rounded-lg p-0.5">
+                <div className="flex items-center gap-0.5 bg-red-50/50 dark:bg-stone-700/50 rounded-lg p-0.5">
                   <button
                     onClick={() => onFeedback(message.id, message.feedback === 'up' ? null : 'up')}
-                    className={`p-1 rounded-md transition-all ${message.feedback === 'up' ? 'text-red-900 bg-white shadow-sm' : 'text-slate-300 hover:text-red-400'}`}
+                    className={`p-1 rounded-md transition-all ${message.feedback === 'up' ? 'text-red-900 dark:text-red-400 bg-white dark:bg-stone-700 shadow-sm' : 'text-slate-300 dark:text-stone-600 hover:text-red-400'}`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill={message.feedback === 'up' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.704a2 2 0 011.94 2.415l-1.619 7.288A2 2 0 0117.086 21H7M14 10V5a2 2 0 00-2-2H9.378a1 1 0 00-.994.89l-1 9A1 1 0 008.378 14H14z" />
@@ -100,7 +100,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onFeedback, onSaveTo
                   </button>
                   <button
                     onClick={() => onFeedback(message.id, message.feedback === 'down' ? null : 'down')}
-                    className={`p-1 rounded-md transition-all ${message.feedback === 'down' ? 'text-orange-600 bg-white shadow-sm' : 'text-slate-300 hover:text-orange-400'}`}
+                    className={`p-1 rounded-md transition-all ${message.feedback === 'down' ? 'text-orange-600 dark:text-orange-400 bg-white dark:bg-stone-700 shadow-sm' : 'text-slate-300 dark:text-stone-600 hover:text-orange-400'}`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill={message.feedback === 'down' ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.296a2 2 0 01-1.94-2.415l1.619-7.288A2 2 0 016.914 3H17M10 14v5a2 2 0 002 2h2.622a1 1 0 00.994-.89l1-9A1 1 0 0015.622 10H10z" />
