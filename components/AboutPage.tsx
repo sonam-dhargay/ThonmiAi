@@ -35,7 +35,7 @@ const AboutPage: React.FC = () => {
           {!isEditing ? (
             <button 
               onClick={() => setIsEditing(true)}
-              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700 rounded-full transition-all"
+              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-full transition-all"
               title="Edit Page"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,8 +66,8 @@ const AboutPage: React.FC = () => {
           )}
         </div>
 
-        <div className="w-28 h-28 bg-red-900 dark:bg-red-800 rounded-[2.2rem] flex items-center justify-center text-white mb-12 shadow-xl shadow-red-100 dark:shadow-black overflow-hidden">
-          <span className="text-7xl leading-none -mt-8">དྷྰི༔</span>
+        <div className="w-24 h-24 bg-red-900 dark:bg-red-800 rounded-[2rem] flex items-center justify-center text-white mb-12 shadow-xl shadow-red-100 dark:shadow-black overflow-hidden">
+          <span className="text-6xl leading-none -mt-6">དྷྰི༔</span>
         </div>
 
         {isEditing ? (

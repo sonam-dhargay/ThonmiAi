@@ -32,8 +32,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     >
       <div className="p-7 flex items-center justify-between border-b border-red-50/50 dark:border-stone-800">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-gradient-to-br from-red-900 to-amber-700 rounded-xl flex items-center justify-center text-white shadow-xl shadow-red-100 dark:shadow-black select-none overflow-hidden">
-            <span className="text-2xl leading-none -mt-2.5 font-bold">དྷྰི༔</span>
+          <div className="w-9 h-9 bg-gradient-to-br from-red-900 to-amber-700 rounded-xl flex items-center justify-center text-white shadow-xl shadow-red-100 dark:shadow-black select-none overflow-hidden">
+            <span className="text-xl leading-none -mt-2 font-bold">དྷྰི༔</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-stone-100 bg-gradient-to-r from-red-950 to-red-800 dark:from-red-300 dark:to-stone-100 bg-clip-text text-transparent">{TIBETAN_STRINGS.appTitle}</h1>
         </div>

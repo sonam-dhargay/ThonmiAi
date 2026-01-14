@@ -77,7 +77,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
     }
   };
 
-  // Automatic sorting logic as requested
+  // Automatic sorting logic
   const filteredEntries = useMemo(() => {
     const currentDict = activeDict === 'regular' ? regularDict : terminologyDict;
     
@@ -103,7 +103,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
       });
   }, [activeDict, regularDict, terminologyDict, searchTerm]);
 
-  // Spell checking for the new entry term (real-time feedback in form)
+  // Spell checking for the new entry term
   const newEntrySpellCheck = useMemo(() => {
     if (!newEntry.term) return { isValid: true };
     return checkTibetanSpelling(newEntry.term);

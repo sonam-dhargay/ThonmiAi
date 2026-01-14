@@ -328,6 +328,7 @@ const App: React.FC = () => {
 
   const handleSaveToDict = (content: string) => {
     const trimmed = content.trim();
+    // Use heuristic to get the first word or short string
     const words = trimmed.split(/[་།\s]+/);
     const term = (trimmed.length <= 15 || words.length <= 1) ? trimmed : words[0] + (trimmed.includes('་') ? '་' : '');
     setDictionaryInitialTerm(term);
@@ -418,11 +419,11 @@ const App: React.FC = () => {
           {viewMode === 'about' ? (
             <AboutPage />
           ) : !activeSession || activeSession.messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center pt-48 md:pt-56 pb-12 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
-              <div className="relative mb-16 animate-float shrink-0 z-10">
-                <div className="absolute inset-0 bg-red-500 blur-[120px] opacity-15 rounded-full"></div>
-                <div className="w-44 h-44 bg-gradient-to-br from-red-900 to-amber-700 rounded-[3rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 dark:shadow-stone-950 relative overflow-hidden">
-                  <span className="text-8xl md:text-9xl leading-none -mt-10 md:-mt-14">དྷྰི༔</span>
+            <div className="h-full flex flex-col items-center pt-6 md:pt-10 pb-12 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
+              <div className="relative mb-12 animate-float shrink-0 z-10">
+                <div className="absolute inset-0 bg-red-500 blur-[100px] opacity-15 rounded-full"></div>
+                <div className="w-36 h-36 bg-gradient-to-br from-red-900 to-amber-700 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 dark:shadow-stone-950 relative overflow-hidden">
+                  <span className="text-7xl md:text-8xl leading-none -mt-8 md:-mt-11">དྷྰི༔</span>
                 </div>
               </div>
               <h3 className="text-5xl font-bold text-slate-900 dark:text-stone-100 mb-6 tracking-tight leading-tight z-10">{TIBETAN_STRINGS.welcomeTitle}</h3>
@@ -521,13 +522,13 @@ const App: React.FC = () => {
                     title={TIBETAN_STRINGS.imageGen}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2-2v12a2 2 0 002 2z" />
                     </svg>
                   </button>
 
                   <button onClick={() => setShowVirtualKeyboard(!showVirtualKeyboard)} className={`p-2.5 rounded-xl transition-all ${showVirtualKeyboard ? 'bg-red-100 dark:bg-stone-700 text-red-900 dark:text-stone-100 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z" />
                     </svg>
                   </button>
                 </div>
