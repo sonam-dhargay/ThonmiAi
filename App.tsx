@@ -24,7 +24,7 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [inputValue, setInputValue] = useState('');
   const [wylieBuffer, setWylieBuffer] = useState('');
-  const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>('ewts');
+  const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>('tibetan');
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);

@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TIBETAN_STRINGS, INITIAL_DICTIONARY, INITIAL_TERMINOLOGY } from '../constants';
 import { generateTibetanResponse } from '../services/geminiService';
 import { DictionaryEntry } from '../types';
 import { ewtsToUnicode } from '../utils/wylie';
+import { checkTibetanSpelling } from '../utils/spellChecker';
 
 interface DictionaryPanelProps {
   isOpen: boolean;
@@ -25,10 +26,6 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   const [showAddForm, setShowAddForm] = useState(false);
   const [newEntry, setNewEntry] = useState<Partial<DictionaryEntry>>({});
   
-  // Drag and Drop state
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
   useEffect(() => {
     const savedReg = localStorage.getItem('bod_skyad_dictionary_reg');
     const savedTerm = localStorage.getItem('bod_skyad_dictionary_term');
@@ -47,6 +44,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   useEffect(() => {
     if (initialTerm) {
       setSearchTerm(initialTerm);
+      // Heuristic: if it contains ASCII, assume it's English/Wylie for terminology
       if (/[a-zA-Z]/.test(initialTerm)) {
         setActiveDict('terminology');
         setNewEntry(prev => ({ ...prev, englishTerm: initialTerm }));
@@ -79,33 +77,37 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
     }
   };
 
-  const currentDict = activeDict === 'regular' ? regularDict : terminologyDict;
-
-  // Sorting logic: Manual for terminology unless searching. Alphabetical for Regular.
-  const filteredEntries = [...currentDict]
-    .filter(entry => {
-      const s = searchTerm.toLowerCase();
-      const matchesSearch = 
-        entry.term.includes(searchTerm) || 
-        entry.definition.includes(searchTerm) ||
-        (entry.englishTerm && entry.englishTerm.toLowerCase().includes(s));
-      return matchesSearch;
-    })
-    .sort((a, b) => {
-      if (searchTerm) {
-        // When searching, use alphabetical for both
+  // Automatic sorting logic as requested
+  const filteredEntries = useMemo(() => {
+    const currentDict = activeDict === 'regular' ? regularDict : terminologyDict;
+    
+    return [...currentDict]
+      .filter(entry => {
+        const s = searchTerm.toLowerCase();
+        const matchesSearch = 
+          entry.term.includes(searchTerm) || 
+          entry.definition.includes(searchTerm) ||
+          (entry.englishTerm && entry.englishTerm.toLowerCase().includes(s));
+        return matchesSearch;
+      })
+      .sort((a, b) => {
         if (activeDict === 'terminology') {
+          // Automatic English alphabetical sort for Terminology Dictionary
           const termA = a.englishTerm?.toLowerCase() || '';
           const termB = b.englishTerm?.toLowerCase() || '';
           return termA.localeCompare(termB);
         } else {
+          // Automatic Tibetan lexicographical sort for Regular Dictionary
           return a.term.localeCompare(b.term, 'bo');
         }
-      }
-      // When NOT searching:
-      if (activeDict === 'terminology') return 0; // Maintain manual/array order
-      return a.term.localeCompare(b.term, 'bo'); // Regular stays alphabetical
-    });
+      });
+  }, [activeDict, regularDict, terminologyDict, searchTerm]);
+
+  // Spell checking for the new entry term (real-time feedback in form)
+  const newEntrySpellCheck = useMemo(() => {
+    if (!newEntry.term) return { isValid: true };
+    return checkTibetanSpelling(newEntry.term);
+  }, [newEntry.term]);
 
   const handleAddTerm = () => {
     if ((activeDict === 'regular' && newEntry.term && newEntry.definition) ||
@@ -129,45 +131,6 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   const handleDeleteTerm = (term: string, englishTerm?: string) => {
     if (activeDict === 'regular') setRegularDict(prev => prev.filter(e => e.term !== term));
     else setTerminologyDict(prev => prev.filter(e => e.term !== term || e.englishTerm !== englishTerm));
-  };
-
-  // Drag and Drop Handlers
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    if (activeDict !== 'terminology' || searchTerm) return;
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = 'move';
-    // Small delay to hide the original element in the DOM while dragging
-    setTimeout(() => {
-      const target = e.target as HTMLElement;
-      target.style.opacity = '0.3';
-    }, 0);
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    if (draggedIndex === null || draggedIndex === index) return;
-    setDragOverIndex(index);
-  };
-
-  const handleDragEnd = (e: React.DragEvent) => {
-    const target = e.target as HTMLElement;
-    target.style.opacity = '1';
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
-    e.preventDefault();
-    if (draggedIndex === null || draggedIndex === targetIndex) return;
-
-    const updatedList = [...terminologyDict];
-    const draggedItem = updatedList[draggedIndex];
-    updatedList.splice(draggedIndex, 1);
-    updatedList.splice(targetIndex, 0, draggedItem);
-
-    setTerminologyDict(updatedList);
-    setDraggedIndex(null);
-    setDragOverIndex(null);
   };
 
   const handleDeepLookup = async () => {
@@ -278,14 +241,21 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
               )}
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest px-2">{TIBETAN_STRINGS.tibetanTerm}</label>
-                <input
-                  value={newEntry.term || ''}
-                  onChange={(e) => setNewEntry(prev => ({ ...prev, term: e.target.value }))}
-                  placeholder="མིང་།"
-                  className="w-full p-3 bg-red-50 dark:bg-stone-900 border border-red-50 dark:border-stone-700 rounded-2xl outline-none text-2xl font-bold focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all dark:text-stone-100"
-                />
+                <div className="relative">
+                  <input
+                    value={newEntry.term || ''}
+                    onChange={(e) => setNewEntry(prev => ({ ...prev, term: e.target.value }))}
+                    placeholder="མིང་།"
+                    className={`w-full p-3 bg-red-50 dark:bg-stone-900 border ${!newEntrySpellCheck.isValid ? 'border-red-500' : 'border-red-50 dark:border-stone-700'} rounded-2xl outline-none text-2xl font-bold focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all dark:text-stone-100`}
+                  />
+                  {!newEntrySpellCheck.isValid && (
+                    <div className="absolute top-full left-0 mt-1 text-[10px] text-red-500 font-bold Tibetan-text animate-fade-in">
+                      {TIBETAN_STRINGS.spellCheckFail}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 pt-2">
                 <label className="text-[10px] font-bold text-red-400 uppercase tracking-widest px-2">འགྲེལ་བཤད། (Definition)</label>
                 <textarea
                   value={newEntry.definition || ''}
@@ -320,52 +290,34 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
           </button>
         )}
 
-        <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar pb-10">
           {filteredEntries.length > 0 ? (
             filteredEntries.map((entry, idx) => {
-              // We need the original index for reordering to work correctly
-              const actualIndex = terminologyDict.findIndex(e => e.term === entry.term && e.englishTerm === entry.englishTerm);
-              const isTerminology = activeDict === 'terminology';
-              const canDrag = isTerminology && !searchTerm;
-
+              const spellCheck = checkTibetanSpelling(entry.term);
+              
               return (
                 <div 
                   key={`${entry.term}-${idx}`}
-                  draggable={canDrag}
-                  onDragStart={(e) => handleDragStart(e, actualIndex)}
-                  onDragOver={(e) => handleDragOver(e, actualIndex)}
-                  onDragEnd={handleDragEnd}
-                  onDrop={(e) => handleDrop(e, actualIndex)}
-                  className={`relative p-6 bg-white dark:bg-stone-800 border rounded-[2.2rem] shadow-sm group transition-all transform duration-300 ${
-                    dragOverIndex === actualIndex && draggedIndex !== actualIndex ? 'border-amber-500 dark:border-amber-600 scale-[1.02] shadow-amber-100 dark:shadow-black shadow-xl' : 'border-red-50 dark:border-stone-700 hover:border-red-100 dark:hover:border-red-800 hover:shadow-xl hover:-translate-y-1'
-                  }`}
+                  className="relative p-6 bg-white dark:bg-stone-800 border rounded-[2.2rem] shadow-sm group transition-all transform duration-300 border-red-50 dark:border-stone-700 hover:border-red-100 dark:hover:border-red-800 hover:shadow-xl hover:-translate-y-1"
                 >
-                  {canDrag && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing text-red-200 dark:text-stone-700 group-hover:text-red-800 dark:group-hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 pr-2">
-                      <svg width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="4" cy="4" r="2" fill="currentColor"/>
-                        <circle cx="4" cy="12" r="2" fill="currentColor"/>
-                        <circle cx="4" cy="20" r="2" fill="currentColor"/>
-                        <circle cx="12" cy="4" r="2" fill="currentColor"/>
-                        <circle cx="12" cy="12" r="2" fill="currentColor"/>
-                        <circle cx="12" cy="20" r="2" fill="currentColor"/>
-                      </svg>
-                    </div>
-                  )}
-
-                  <div className={`flex flex-col gap-1 mb-3 ${canDrag ? 'ml-4' : ''}`}>
+                  <div className="flex flex-col gap-1 mb-3">
                     {entry.englishTerm && (
                       <span className="text-sm font-bold text-amber-600 dark:text-amber-500 tracking-wide uppercase">{entry.englishTerm}</span>
                     )}
-                    <h4 className="text-2xl font-bold text-slate-900 dark:text-stone-100 leading-tight group-hover:text-red-900 dark:group-hover:text-red-400 transition-colors">{entry.term}</h4>
+                    <div className="flex items-center gap-3">
+                      <h4 className="text-2xl font-bold text-slate-900 dark:text-stone-100 leading-tight group-hover:text-red-900 dark:group-hover:text-red-400 transition-colors">{entry.term}</h4>
+                      {activeDict === 'regular' && (
+                        <div className={`w-2 h-2 rounded-full ${spellCheck.isValid ? 'bg-green-400' : 'bg-red-400'} opacity-0 group-hover:opacity-100 transition-opacity`} title={spellCheck.isValid ? TIBETAN_STRINGS.spellCheckPass : TIBETAN_STRINGS.spellCheckFail}></div>
+                      )}
+                    </div>
                   </div>
-                  <div className={`prose prose-sm prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-stone-400 leading-relaxed Tibetan-text ${canDrag ? 'ml-4' : ''}`}>
+                  <div className="prose prose-sm prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-stone-400 leading-relaxed Tibetan-text">
                     {entry.definition}
                   </div>
                   {entry.isUserAdded && (
                     <button 
                       onClick={() => handleDeleteTerm(entry.term, entry.englishTerm)}
-                      className={`mt-5 text-[10px] text-red-400 dark:text-red-600 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-2 font-bold uppercase tracking-widest ${canDrag ? 'ml-4' : ''}`}
+                      className="mt-5 text-[10px] text-red-400 dark:text-red-600 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-2 font-bold uppercase tracking-widest"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
