@@ -30,24 +30,19 @@ const Sidebar: React.FC<SidebarProps> = ({
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0 md:relative md:flex transition-all duration-500 ease-in-out z-30 w-80 glass-panel text-slate-900 dark:text-stone-100 flex-col shrink-0 border-r border-red-100/30 dark:border-stone-800 shadow-2xl md:shadow-none overflow-hidden`}
     >
-      <div className="p-7 flex items-center justify-between border-b border-red-50/50 dark:border-stone-800">
-        <div className="flex items-center gap-4">
+      <div className="p-7 border-b border-red-50/50 dark:border-stone-800">
+        <div className="flex items-center gap-4 mb-2">
           <div className="w-9 h-9 bg-gradient-to-br from-red-900 to-amber-700 rounded-xl flex items-center justify-center text-white shadow-xl shadow-red-100 dark:shadow-black select-none overflow-hidden">
             <span className="text-xl leading-none -mt-2 font-bold">དྷྰི༔</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-stone-100 bg-gradient-to-r from-red-950 to-red-800 dark:from-red-300 dark:to-stone-100 bg-clip-text text-transparent">{TIBETAN_STRINGS.appTitle}</h1>
         </div>
+        <p className="text-sm font-medium text-slate-400 dark:text-stone-500 Tibetan-text px-1 leading-tight">
+          བོད་ཀྱི་སྐད་ཡིག་གསོན་པོར་གནས་ཐབས།
+        </p>
       </div>
 
       <div className="p-5 space-y-3">
-        <button
-          onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-3 py-4 px-5 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 transition-all rounded-[1.5rem] text-white text-lg font-bold shadow-2xl shadow-amber-100 dark:shadow-black/50 active:scale-[0.96] group"
-        >
-          <span className="text-2xl leading-none group-hover:rotate-90 transition-transform duration-500">+</span>
-          <span>{TIBETAN_STRINGS.newChat}</span>
-        </button>
-        
         <button
           onClick={onShowAbout}
           className="w-full flex items-center justify-start gap-4 py-3 px-5 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
@@ -58,6 +53,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             </svg>
           </div>
           <span>{TIBETAN_STRINGS.aboutProject}</span>
+        </button>
+
+        <button
+          onClick={onNewChat}
+          className="w-full flex items-center justify-center gap-3 py-4 px-5 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 transition-all rounded-[1.5rem] text-white text-lg font-bold shadow-2xl shadow-amber-100 dark:shadow-black/50 active:scale-[0.96] group"
+        >
+          <span className="text-2xl leading-none group-hover:rotate-90 transition-transform duration-500">+</span>
+          <span>{TIBETAN_STRINGS.newChat}</span>
         </button>
       </div>
 
