@@ -356,14 +356,14 @@ const App: React.FC = () => {
       />
 
       <main className="flex-1 flex flex-col relative min-w-0 bg-white dark:bg-stone-900 transition-colors duration-300">
-        <header className="h-16 border-b border-red-50 dark:border-stone-800 glass-panel flex items-center justify-between px-6 sticky top-0 z-20">
+        <header className="h-13 border-b border-red-50 dark:border-stone-800 glass-panel flex items-center justify-between px-6 sticky top-0 z-20">
           <div className="flex items-center gap-4">
             <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden p-2 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-900 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-900 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-900 to-amber-600 dark:from-red-400 dark:to-amber-400 bg-clip-text text-transparent">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-red-900 to-amber-600 dark:from-red-400 dark:to-amber-400 bg-clip-text text-transparent">
               {TIBETAN_STRINGS.appTitle}
             </h2>
           </div>
@@ -371,44 +371,44 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-amber-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
+              className="p-2 text-slate-400 hover:text-red-900 dark:hover:text-amber-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title="Theme Toggle"
             >
               {theme === 'light' ? (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 9H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               )}
             </button>
             <button
               onClick={() => setIsWylieGuideOpen(true)}
-              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
+              className="p-2 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title={TIBETAN_STRINGS.wylieGuide}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
               </svg>
             </button>
             <button
               onClick={() => setIsGrammarGuideOpen(true)}
-              className="p-2.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-stone-800 rounded-xl transition-all"
+              className="p-2 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title={TIBETAN_STRINGS.grammarGuide}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </button>
             <button
               onClick={() => { setDictionaryInitialTerm(undefined); setIsDictionaryOpen(true); }}
-              className="p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
+              className="p-2 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-xl transition-all"
               title={TIBETAN_STRINGS.dictionary}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </button>
@@ -420,14 +420,13 @@ const App: React.FC = () => {
             <AboutPage />
           ) : !activeSession || activeSession.messages.length === 0 ? (
             <div className="h-full flex flex-col items-center pt-6 md:pt-10 pb-12 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
-              <div className="relative mb-12 animate-float shrink-0 z-10">
-                <div className="absolute inset-0 bg-red-500 blur-[100px] opacity-15 rounded-full"></div>
-                <div className="w-36 h-36 bg-gradient-to-br from-red-900 to-amber-700 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 dark:shadow-stone-950 relative overflow-hidden">
-                  <span className="text-7xl md:text-8xl leading-none -mt-8 md:-mt-11">དྷྰི༔</span>
+              <div className="relative mb-10 animate-float shrink-0 z-10">
+                <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-15 rounded-full"></div>
+                <div className="w-28 h-28 bg-gradient-to-br from-red-900 to-amber-700 rounded-[2rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 dark:shadow-stone-950 relative overflow-hidden">
+                  <span className="text-5xl md:text-6xl leading-none -mt-6 md:-mt-8">དྷྰི༔</span>
                 </div>
               </div>
-              <h3 className="text-5xl font-bold text-slate-900 dark:text-stone-100 mb-6 tracking-tight leading-tight z-10">{TIBETAN_STRINGS.welcomeTitle}</h3>
-              <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-14 text-2xl leading-relaxed font-medium Tibetan-text z-10">{TIBETAN_STRINGS.welcomeSubtitle}</p>
+              <h3 className="text-4xl font-bold text-slate-900 dark:text-stone-100 mb-10 tracking-tight leading-tight z-10">{TIBETAN_STRINGS.welcomeTitle}</h3>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full relative mb-12 z-10">
                 {examplePrompts.map((prompt, idx) => (
@@ -455,7 +454,7 @@ const App: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="max-w-4xl mx-auto w-full p-6 md:p-10 pb-40">
+            <div className="max-w-4xl mx-auto w-full p-6 md:p-10 pb-48">
               {activeSession.messages.map((msg) => (
                 <ChatMessage key={msg.id} message={msg} onFeedback={handleFeedback} onSaveToDict={handleSaveToDict} />
               ))}
@@ -478,9 +477,9 @@ const App: React.FC = () => {
 
         {viewMode === 'chat' && (
           <div className="p-6 bg-transparent sticky bottom-0 z-20 pointer-events-none">
-            <div className="max-w-4xl mx-auto space-y-4 pointer-events-auto">
+            <div className="max-w-4xl mx-auto space-y-3 pointer-events-auto flex flex-col">
               {!spellResult.isValid && keyboardMode !== 'english' && (
-                <div className="animate-slide-up bg-red-50/90 dark:bg-stone-900/90 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50 dark:shadow-black/50">
+                <div className="animate-slide-up bg-red-50/90 dark:bg-stone-900/90 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50 dark:shadow-black/50 mb-2">
                   <div className="flex items-center gap-3 mb-2 text-red-600 dark:text-red-400 font-bold text-xs uppercase tracking-widest">
                     <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
                     {TIBETAN_STRINGS.spellCheckFail}
@@ -496,13 +495,8 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              <PredictiveBar 
-                suggestions={suggestions} 
-                onSelect={handleSuggestionSelect} 
-                isVisible={keyboardMode !== 'english'}
-              />
-
-              <div className="flex items-center justify-between px-3 bg-white/70 dark:bg-stone-800/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 dark:border-stone-700 shadow-xl transition-colors duration-300">
+              {/* Toolbar (Keyboards Tile) - Order 1 (Top of Footer Area, immediately below chat bubbles) */}
+              <div className="order-1 flex items-center justify-between px-3 bg-white/70 dark:bg-stone-800/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 dark:border-stone-700 shadow-xl transition-colors duration-300">
                 <div className="flex items-center gap-2">
                   {(['tibetan', 'ewts', 'english'] as KeyboardMode[]).map((m) => (
                     <button
@@ -534,7 +528,17 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="relative group">
+              {/* Suggestions Bar - Order 2 */}
+              <div className="order-2">
+                <PredictiveBar 
+                  suggestions={suggestions} 
+                  onSelect={handleSuggestionSelect} 
+                  isVisible={keyboardMode !== 'english'}
+                />
+              </div>
+
+              {/* The Input Tile (Textarea) - Order 3 (Bottom) */}
+              <div className="relative group order-3">
                 <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="relative">
                   <textarea
                     ref={textareaRef}
@@ -560,7 +564,7 @@ const App: React.FC = () => {
               </div>
 
               {showVirtualKeyboard && (
-                <div className="animate-slide-up">
+                <div className="animate-slide-up order-4">
                   <VirtualKeyboard mode={keyboardMode} onKeyPress={handleKeyPress} onBackspace={handleBackspace} />
                 </div>
               )}

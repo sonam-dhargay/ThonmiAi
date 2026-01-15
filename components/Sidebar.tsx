@@ -30,16 +30,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         isOpen ? 'translate-x-0' : '-translate-x-full'
       } md:translate-x-0 md:relative md:flex transition-all duration-500 ease-in-out z-30 w-80 glass-panel text-slate-900 dark:text-stone-100 flex-col shrink-0 border-r border-red-100/30 dark:border-stone-800 shadow-2xl md:shadow-none overflow-hidden`}
     >
-      <div className="p-7 border-b border-red-50/50 dark:border-stone-800">
-        <div className="flex items-center gap-4 mb-2">
-          <div className="w-9 h-9 bg-gradient-to-br from-red-900 to-amber-700 rounded-xl flex items-center justify-center text-white shadow-xl shadow-red-100 dark:shadow-black select-none overflow-hidden">
-            <span className="text-xl leading-none -mt-2 font-bold">དྷྰི༔</span>
+      <div className="p-5 border-b border-red-50/50 dark:border-stone-800">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 bg-gradient-to-br from-red-900 to-amber-700 rounded-lg flex items-center justify-center text-white shadow-lg shadow-red-100 dark:shadow-black select-none overflow-hidden">
+            <span className="text-lg leading-none -mt-1 font-bold">དྷྰི༔</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-stone-100 bg-gradient-to-r from-red-950 to-red-800 dark:from-red-300 dark:to-stone-100 bg-clip-text text-transparent">{TIBETAN_STRINGS.appTitle}</h1>
+          <h1 className="text-xl font-bold tracking-tight text-slate-800 dark:text-stone-100 bg-gradient-to-r from-red-950 to-red-800 dark:from-red-300 dark:to-stone-100 bg-clip-text text-transparent">{TIBETAN_STRINGS.appTitle}</h1>
         </div>
-        <p className="text-sm font-medium text-slate-400 dark:text-stone-500 Tibetan-text px-1 leading-tight">
-          བོད་ཀྱི་སྐད་ཡིག་གསོན་པོར་གནས་ཐབས།
-        </p>
       </div>
 
       <div className="p-5 space-y-3">
