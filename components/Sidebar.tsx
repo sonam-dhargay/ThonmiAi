@@ -2,6 +2,7 @@
 import React from 'react';
 import { ChatSession } from '../types';
 import { TIBETAN_STRINGS } from '../constants';
+import Logo from './Logo';
 
 interface SidebarProps {
   sessions: ChatSession[];
@@ -31,10 +32,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       } md:translate-x-0 md:relative md:flex transition-all duration-500 ease-in-out z-30 w-80 glass-panel text-slate-900 dark:text-stone-100 flex-col shrink-0 border-r border-red-100/30 dark:border-stone-800 shadow-2xl md:shadow-none overflow-hidden`}
     >
       <div className="p-7 border-b border-red-50/50 dark:border-stone-800">
-        <div className="flex items-center gap-4">
-          <div className="w-9 h-9 bg-gradient-to-br from-red-900 to-amber-700 rounded-xl flex items-center justify-center text-white shadow-xl shadow-red-100 dark:shadow-black select-none overflow-hidden">
-            <span className="text-xl leading-none -mt-2 font-bold">དྷྰི༔</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <Logo className="w-10 h-10" />
           <h1 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-stone-100 bg-gradient-to-r from-red-950 to-red-800 dark:from-red-300 dark:to-stone-100 bg-clip-text text-transparent">{TIBETAN_STRINGS.appTitle}</h1>
         </div>
       </div>

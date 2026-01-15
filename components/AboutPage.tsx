@@ -1,14 +1,13 @@
 
 import React from 'react';
 import { TIBETAN_STRINGS } from '../constants';
+import Logo from './Logo';
 
 const AboutPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto py-14 px-7 transition-colors duration-300">
       <div className="bg-white dark:bg-stone-800 rounded-[2.5rem] shadow-xl p-10 md:p-14 border border-red-50 dark:border-stone-700 relative transition-colors duration-300">
-        <div className="w-20 h-20 mb-12 flex items-center justify-center bg-gradient-to-br from-red-900 to-amber-700 rounded-3xl text-white shadow-xl relative overflow-hidden select-none">
-          <span className="text-5xl leading-none -mt-3 font-bold">དྷྰི༔</span>
-        </div>
+        <Logo className="w-20 h-20 mb-12 drop-shadow-lg" />
 
         <h1 className="text-3xl font-bold text-slate-900 dark:text-stone-100 mb-8 leading-tight">
           {TIBETAN_STRINGS.manifestoTitle}

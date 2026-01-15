@@ -8,6 +8,7 @@ import WylieGuide from './components/WylieGuide';
 import GrammarGuide from './components/GrammarGuide';
 import AboutPage from './components/AboutPage';
 import PredictiveBar from './components/PredictiveBar';
+import Logo from './components/Logo';
 import { Message, ChatSession, KeyboardMode } from './types';
 import { TIBETAN_STRINGS, COMMON_TIBETAN_WORDS } from './constants';
 import { generateStreamTibetanResponse, getDynamicExamplePrompts, isImageRequest, generateImage } from './services/geminiService';
@@ -144,7 +145,6 @@ const App: React.FC = () => {
   const suggestions = useMemo(() => {
     if (keyboardMode === 'english' || !inputValue) return [];
     
-    // Get the last partial word (after last space, tsheg, or shad)
     const lastWordMatch = inputValue.match(/[^\u0F0B\u0F0D\s]+$/);
     const lastWord = lastWordMatch ? lastWordMatch[0] : "";
     
@@ -328,7 +328,6 @@ const App: React.FC = () => {
 
   const handleSaveToDict = (content: string) => {
     const trimmed = content.trim();
-    // Use heuristic to get the first word or short string
     const words = trimmed.split(/[་།\s]+/);
     const term = (trimmed.length <= 15 || words.length <= 1) ? trimmed : words[0] + (trimmed.includes('་') ? '་' : '');
     setDictionaryInitialTerm(term);
@@ -419,22 +418,24 @@ const App: React.FC = () => {
           {viewMode === 'about' ? (
             <AboutPage />
           ) : !activeSession || activeSession.messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center pt-6 md:pt-10 pb-12 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
-              <div className="relative mb-12 animate-float shrink-0 z-10">
+            <div className="h-full flex flex-col items-center pt-4 md:pt-10 pb-8 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
+              <div className="relative mb-1 md:mb-2 animate-float shrink-0 z-10">
                 <div className="absolute inset-0 bg-red-500 blur-[100px] opacity-15 rounded-full"></div>
-                <div className="w-36 h-36 bg-gradient-to-br from-red-900 to-amber-700 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-red-200 dark:shadow-stone-950 relative overflow-hidden">
-                  <span className="text-7xl md:text-8xl leading-none -mt-8 md:-mt-11">དྷྰི༔</span>
-                </div>
+                <Logo className="w-24 h-24 md:w-36 md:h-36 drop-shadow-2xl relative z-10 transition-all duration-500" />
               </div>
-              <h3 className="text-5xl font-bold text-slate-900 dark:text-stone-100 mb-6 tracking-tight leading-tight z-10">{TIBETAN_STRINGS.welcomeTitle}</h3>
-              <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-14 text-2xl leading-relaxed font-medium Tibetan-text z-10">{TIBETAN_STRINGS.welcomeSubtitle}</p>
+              <h3 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-stone-100 mb-3 md:mb-6 tracking-tight leading-tight z-10 transition-all">
+                {TIBETAN_STRINGS.welcomeTitle}
+              </h3>
+              <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-6 md:mb-10 text-xl md:text-2xl leading-relaxed font-medium Tibetan-text z-10 transition-all">
+                {TIBETAN_STRINGS.welcomeSubtitle}
+              </p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full relative mb-12 z-10">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 w-full relative mb-6 md:mb-12 z-10">
                 {examplePrompts.map((prompt, idx) => (
                   <button
                     key={idx}
                     onClick={() => { setInputValue(prompt); textareaRef.current?.focus(); }}
-                    className={`group p-6 bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-[2.2rem] hover:border-amber-200 dark:hover:border-amber-600 hover:shadow-2xl transition-all text-left text-slate-700 dark:text-stone-300 font-medium text-xl leading-relaxed shadow-sm transform duration-300 hover:-translate-y-1 Tibetan-text ${isRefreshingPrompts ? 'opacity-50 blur-sm' : 'opacity-100'}`}
+                    className={`group p-4 md:p-6 bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-[1.8rem] md:rounded-[2.2rem] hover:border-amber-200 dark:hover:border-amber-600 hover:shadow-2xl transition-all text-left text-slate-700 dark:text-stone-300 font-medium text-lg md:text-xl leading-relaxed shadow-sm transform duration-300 hover:-translate-y-1 Tibetan-text ${isRefreshingPrompts ? 'opacity-50 blur-sm' : 'opacity-100'}`}
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-2.5 h-2.5 rounded-full bg-red-100 dark:bg-red-900/40 mt-3 group-hover:bg-red-900 dark:group-hover:bg-red-400 transition-colors shrink-0"></div>
@@ -442,13 +443,13 @@ const App: React.FC = () => {
                     </div>
                   </button>
                 ))}
-                <button onClick={refreshPrompts} disabled={isRefreshingPrompts} className="absolute -top-16 right-4 p-3 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-full transition-all" title="Refresh">
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-7 w-7 ${isRefreshingPrompts ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button onClick={refreshPrompts} disabled={isRefreshingPrompts} className="absolute -top-12 md:-top-16 right-0 md:right-4 p-3 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-full transition-all" title="Refresh">
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 md:h-7 md:w-7 ${isRefreshingPrompts ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </button>
               </div>
-              <div className="flex items-center gap-2 text-slate-400 dark:text-stone-500 text-sm font-bold tracking-widest uppercase animate-fade-in opacity-70 z-10">
+              <div className="hidden md:flex items-center gap-2 text-slate-400 dark:text-stone-500 text-sm font-bold tracking-widest uppercase animate-fade-in opacity-70 z-10">
                 <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
                 {TIBETAN_STRINGS.examplePromptsNote}
                 <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
@@ -477,7 +478,7 @@ const App: React.FC = () => {
         </div>
 
         {viewMode === 'chat' && (
-          <div className="p-6 bg-transparent sticky bottom-0 z-20 pointer-events-none">
+          <div className="p-4 md:p-6 bg-transparent sticky bottom-0 z-20 pointer-events-none">
             <div className="max-w-4xl mx-auto space-y-3 pointer-events-auto flex flex-col">
               {!spellResult.isValid && keyboardMode !== 'english' && (
                 <div className="animate-slide-up bg-red-50/90 dark:bg-stone-900/90 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50 dark:shadow-black/50 mb-2">
@@ -496,40 +497,38 @@ const App: React.FC = () => {
                 </div>
               )}
 
-              {/* Toolbar (Keyboards Tile) - Order 1 (Top of Footer Area, immediately below chat bubbles) */}
               <div className="order-1 flex items-center justify-between px-3 bg-white/70 dark:bg-stone-800/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 dark:border-stone-700 shadow-xl transition-colors duration-300">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
                   {(['tibetan', 'ewts', 'english'] as KeyboardMode[]).map((m) => (
                     <button
                       key={m}
                       onClick={() => setKeyboardMode(m)}
-                      className={`text-[11px] px-4 py-2 rounded-xl font-bold transition-all ${keyboardMode === m ? 'bg-red-900 dark:bg-red-700 text-white shadow-lg' : 'text-slate-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700 hover:shadow-sm'}`}
+                      className={`text-[10px] md:text-[11px] px-3 md:px-4 py-2 rounded-xl font-bold transition-all whitespace-nowrap ${keyboardMode === m ? 'bg-red-900 dark:bg-red-700 text-white shadow-lg' : 'text-slate-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700'}`}
                     >
                       {m === 'ewts' ? TIBETAN_STRINGS.kbEwts : m === 'tibetan' ? TIBETAN_STRINGS.kbTibetan : TIBETAN_STRINGS.kbEnglish}
                     </button>
                   ))}
                 </div>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 md:gap-2 shrink-0">
                   <button 
                     onClick={() => setIsImageMode(!isImageMode)} 
-                    className={`p-2.5 rounded-xl transition-all ${isImageMode ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}
+                    className={`p-2 md:p-2.5 rounded-xl transition-all ${isImageMode ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}
                     title={TIBETAN_STRINGS.imageGen}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2-2v12a2 2 0 002 2z" />
                     </svg>
                   </button>
 
-                  <button onClick={() => setShowVirtualKeyboard(!showVirtualKeyboard)} className={`p-2.5 rounded-xl transition-all ${showVirtualKeyboard ? 'bg-red-100 dark:bg-stone-700 text-red-900 dark:text-stone-100 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <button onClick={() => setShowVirtualKeyboard(!showVirtualKeyboard)} className={`p-2 md:p-2.5 rounded-xl transition-all ${showVirtualKeyboard ? 'bg-red-100 dark:bg-stone-700 text-red-900 dark:text-stone-100 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z" />
                     </svg>
                   </button>
                 </div>
               </div>
 
-              {/* Suggestions Bar - Order 2 */}
               <div className="order-2">
                 <PredictiveBar 
                   suggestions={suggestions} 
@@ -538,7 +537,6 @@ const App: React.FC = () => {
                 />
               </div>
 
-              {/* The Input Tile (Textarea) - Order 3 (Bottom) */}
               <div className="relative group order-3">
                 <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="relative">
                   <textarea
@@ -548,16 +546,16 @@ const App: React.FC = () => {
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
                     placeholder={isImageMode ? TIBETAN_STRINGS.imageGenPlaceholder : (keyboardMode === 'ewts' ? TIBETAN_STRINGS.wyliePlaceholder : TIBETAN_STRINGS.inputPlaceholder)}
                     rows={1}
-                    className={`w-full bg-white dark:bg-stone-800 border ${isImageMode ? 'border-amber-200 dark:border-amber-700 ring-amber-50 dark:ring-amber-900/20' : (!spellResult.isValid && keyboardMode !== 'english' ? 'border-red-200 dark:border-red-900/50 ring-red-100 dark:ring-red-900/10' : 'border-red-100 dark:border-stone-700 ring-red-900/5 dark:ring-stone-400/5')} focus:border-red-900 dark:focus:border-red-600 focus:ring-8 rounded-[2.5rem] py-6 pl-8 pr-20 text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl dark:shadow-black/50 Tibetan-text`}
-                    style={{ minHeight: '84px' }}
+                    className={`w-full bg-white dark:bg-stone-800 border ${isImageMode ? 'border-amber-200 dark:border-amber-700' : (!spellResult.isValid && keyboardMode !== 'english' ? 'border-red-200 dark:border-red-900/50' : 'border-red-100 dark:border-stone-700')} focus:border-red-900 dark:focus:border-red-600 focus:ring-4 md:focus:ring-8 rounded-[2rem] md:rounded-[2.5rem] py-4 md:py-6 pl-6 md:pl-8 pr-16 md:pr-20 text-xl md:text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl Tibetan-text`}
+                    style={{ minHeight: '64px', maxHeight: '200px' }}
                   />
                   <button
                     type="submit"
                     disabled={isLoading || !inputValue.trim()}
-                    className={`absolute right-3.5 bottom-3.5 p-4 text-white rounded-[1.8rem] transition-all shadow-xl active:scale-90 ${isImageMode ? 'bg-amber-500 hover:bg-amber-600' : 'bg-red-900 hover:bg-red-800 dark:bg-red-700 dark:hover:bg-red-600'} disabled:bg-slate-100 dark:disabled:bg-stone-800 disabled:text-slate-300 dark:disabled:text-stone-600`}
+                    className={`absolute right-2 md:right-3.5 bottom-2 md:bottom-3.5 p-3 md:p-4 text-white rounded-[1.4rem] md:rounded-[1.8rem] transition-all shadow-xl active:scale-90 ${isImageMode ? 'bg-amber-500 hover:bg-amber-600' : 'bg-red-900 hover:bg-red-800 dark:bg-red-700 dark:hover:bg-red-600'} disabled:bg-slate-100 dark:disabled:bg-stone-800 disabled:text-slate-300`}
                     aria-label="Send Message"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                     </svg>
                   </button>
