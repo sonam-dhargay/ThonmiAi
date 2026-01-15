@@ -7,6 +7,8 @@ import DictionaryPanel from './components/DictionaryPanel';
 import WylieGuide from './components/WylieGuide';
 import GrammarGuide from './components/GrammarGuide';
 import AboutPage from './components/AboutPage';
+import WhyPage from './components/WhyPage';
+import HowPage from './components/HowPage';
 import PredictiveBar from './components/PredictiveBar';
 import Logo from './components/Logo';
 import { Message, ChatSession, KeyboardMode } from './types';
@@ -15,7 +17,7 @@ import { generateStreamTibetanResponse, getDynamicExamplePrompts, isImageRequest
 import { ewtsToUnicode } from './utils/wylie';
 import { checkTibetanSpelling, SpellResult } from './utils/spellChecker';
 
-type ViewMode = 'chat' | 'about';
+type ViewMode = 'chat' | 'about' | 'why' | 'how';
 type ThemeMode = 'light' | 'dark';
 
 const App: React.FC = () => {
@@ -190,6 +192,18 @@ const App: React.FC = () => {
     setIsSidebarOpen(false);
   };
 
+  const handleShowWhy = () => {
+    setViewMode('why');
+    setActiveSessionId(null);
+    setIsSidebarOpen(false);
+  };
+
+  const handleShowHow = () => {
+    setViewMode('how');
+    setActiveSessionId(null);
+    setIsSidebarOpen(false);
+  };
+
   const handleSelectSession = (id: string) => {
     setActiveSessionId(id);
     setViewMode('chat');
@@ -341,6 +355,76 @@ const App: React.FC = () => {
     }
   };
 
+  const renderContent = () => {
+    switch (viewMode) {
+      case 'about':
+        return <AboutPage />;
+      case 'why':
+        return <WhyPage />;
+      case 'how':
+        return <HowPage />;
+      default:
+        return !activeSession || activeSession.messages.length === 0 ? (
+          <div className="h-full flex flex-col items-center pt-2 md:pt-6 pb-8 px-6 text-center max-w-5xl mx-auto overflow-y-visible relative">
+            <div className="relative mb-2 md:mb-4 animate-float shrink-0 z-10">
+              <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-10 rounded-full"></div>
+              <Logo className="w-14 h-14 md:w-16 md:h-16 drop-shadow-xl relative z-10 transition-all duration-500" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-stone-100 mb-1 md:mb-2 tracking-tight leading-tight z-10 transition-all">
+              {TIBETAN_STRINGS.welcomeTitle}
+            </h3>
+            <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-4 md:mb-8 text-base md:text-lg leading-relaxed font-medium Tibetan-text z-10 transition-all">
+              {TIBETAN_STRINGS.welcomeSubtitle}
+            </p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full relative mb-6 md:mb-12 z-10">
+              {examplePrompts.map((prompt, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => { setInputValue(prompt); textareaRef.current?.focus(); }}
+                  className={`group p-4 md:p-5 bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-[1.8rem] md:rounded-[2rem] hover:border-amber-400 dark:hover:border-amber-600 hover:shadow-2xl transition-all text-left text-slate-700 dark:text-stone-300 font-medium text-lg md:text-xl leading-relaxed shadow-sm transform duration-300 hover:-translate-y-1 Tibetan-text ${isRefreshingPrompts ? 'opacity-50 blur-sm' : 'opacity-100'}`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-100 dark:bg-red-900/40 mt-3 group-hover:bg-red-900 dark:group-hover:bg-red-400 transition-colors shrink-0"></div>
+                    {prompt}
+                  </div>
+                </button>
+              ))}
+              <button onClick={refreshPrompts} disabled={isRefreshingPrompts} className="absolute -top-10 md:-top-12 right-0 md:right-4 p-2.5 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-full transition-all" title="Refresh">
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 md:h-6 md:w-6 ${isRefreshingPrompts ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            </div>
+            <div className="hidden md:flex items-center gap-2 text-slate-400 dark:text-stone-500 text-[10px] font-bold tracking-widest uppercase animate-fade-in opacity-70 z-10">
+              <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
+              {TIBETAN_STRINGS.examplePromptsNote}
+              <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-4xl mx-auto w-full p-6 md:p-10 pb-48">
+            {activeSession.messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} onFeedback={handleFeedback} onSaveToDict={handleSaveToDict} />
+            ))}
+            {isLoading && (
+              <div className="flex justify-start mb-10 animate-pulse">
+                <div className="bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 px-8 py-6 rounded-[2rem] rounded-tl-none shadow-md flex items-center gap-5">
+                  <div className="flex gap-2.5">
+                    <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                    <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                  </div>
+                  <span className="text-base text-slate-400 dark:text-stone-500 font-bold tracking-widest uppercase">{TIBETAN_STRINGS.loading}</span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="flex h-screen bg-[#fffcf9] dark:bg-stone-950 overflow-hidden font-sans text-xl transition-colors duration-300">
       <Sidebar
@@ -350,6 +434,8 @@ const App: React.FC = () => {
         onNewChat={handleNewChat}
         onDeleteSession={(id) => setSessions(prev => prev.filter(s => s.id !== id))}
         onShowAbout={handleShowAbout}
+        onShowWhy={handleShowWhy}
+        onShowHow={handleShowHow}
         onResetApp={handleResetApp}
         isOpen={isSidebarOpen}
       />
@@ -415,66 +501,7 @@ const App: React.FC = () => {
         </header>
 
         <div className="flex-1 overflow-y-auto relative custom-scrollbar bg-red-50/10 dark:bg-stone-900 transition-colors duration-300">
-          {viewMode === 'about' ? (
-            <AboutPage />
-          ) : !activeSession || activeSession.messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center pt-4 md:pt-10 pb-8 px-8 text-center max-w-5xl mx-auto overflow-y-visible relative">
-              <div className="relative mb-1 md:mb-2 animate-float shrink-0 z-10">
-                <div className="absolute inset-0 bg-red-500 blur-[100px] opacity-15 rounded-full"></div>
-                <Logo className="w-24 h-24 md:w-36 md:h-36 drop-shadow-2xl relative z-10 transition-all duration-500" />
-              </div>
-              <h3 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-stone-100 mb-3 md:mb-6 tracking-tight leading-tight z-10 transition-all">
-                {TIBETAN_STRINGS.welcomeTitle}
-              </h3>
-              <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-6 md:mb-10 text-xl md:text-2xl leading-relaxed font-medium Tibetan-text z-10 transition-all">
-                {TIBETAN_STRINGS.welcomeSubtitle}
-              </p>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-5 w-full relative mb-6 md:mb-12 z-10">
-                {examplePrompts.map((prompt, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => { setInputValue(prompt); textareaRef.current?.focus(); }}
-                    className={`group p-4 md:p-6 bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-[1.8rem] md:rounded-[2.2rem] hover:border-amber-200 dark:hover:border-amber-600 hover:shadow-2xl transition-all text-left text-slate-700 dark:text-stone-300 font-medium text-lg md:text-xl leading-relaxed shadow-sm transform duration-300 hover:-translate-y-1 Tibetan-text ${isRefreshingPrompts ? 'opacity-50 blur-sm' : 'opacity-100'}`}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-2.5 h-2.5 rounded-full bg-red-100 dark:bg-red-900/40 mt-3 group-hover:bg-red-900 dark:group-hover:bg-red-400 transition-colors shrink-0"></div>
-                      {prompt}
-                    </div>
-                  </button>
-                ))}
-                <button onClick={refreshPrompts} disabled={isRefreshingPrompts} className="absolute -top-12 md:-top-16 right-0 md:right-4 p-3 text-slate-400 hover:text-red-900 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 rounded-full transition-all" title="Refresh">
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 md:h-7 md:w-7 ${isRefreshingPrompts ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                </button>
-              </div>
-              <div className="hidden md:flex items-center gap-2 text-slate-400 dark:text-stone-500 text-sm font-bold tracking-widest uppercase animate-fade-in opacity-70 z-10">
-                <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
-                {TIBETAN_STRINGS.examplePromptsNote}
-                <span className="w-8 h-px bg-red-100 dark:bg-stone-800"></span>
-              </div>
-            </div>
-          ) : (
-            <div className="max-w-4xl mx-auto w-full p-6 md:p-10 pb-48">
-              {activeSession.messages.map((msg) => (
-                <ChatMessage key={msg.id} message={msg} onFeedback={handleFeedback} onSaveToDict={handleSaveToDict} />
-              ))}
-              {isLoading && (
-                <div className="flex justify-start mb-10 animate-pulse">
-                  <div className="bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 px-8 py-6 rounded-[2rem] rounded-tl-none shadow-md flex items-center gap-5">
-                    <div className="flex gap-2.5">
-                      <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                      <div className="w-3 h-3 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
-                    </div>
-                    <span className="text-base text-slate-400 dark:text-stone-500 font-bold tracking-widest uppercase">{TIBETAN_STRINGS.loading}</span>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
+          {renderContent()}
         </div>
 
         {viewMode === 'chat' && (

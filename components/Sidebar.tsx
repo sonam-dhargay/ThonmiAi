@@ -11,6 +11,8 @@ interface SidebarProps {
   onNewChat: () => void;
   onDeleteSession: (id: string) => void;
   onShowAbout: () => void;
+  onShowWhy: () => void;
+  onShowHow: () => void;
   onResetApp: () => void;
   isOpen: boolean;
 }
@@ -22,6 +24,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onNewChat,
   onDeleteSession,
   onShowAbout,
+  onShowWhy,
+  onShowHow,
   onResetApp,
   isOpen
 }) => {
@@ -38,12 +42,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="p-5 space-y-3">
+      <div className="p-5 space-y-2">
         <button
           onClick={onShowAbout}
-          className="w-full flex items-center justify-start gap-4 py-3 px-5 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
         >
-          <div className="w-8 h-8 rounded-xl bg-red-50/50 dark:bg-stone-800/50 flex items-center justify-center group-hover:bg-red-50 dark:group-hover:bg-stone-700 transition-colors">
+          <div className="w-8 h-8 rounded-xl bg-red-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -52,8 +56,32 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <button
+          onClick={onShowWhy}
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
+        >
+          <div className="w-8 h-8 rounded-xl bg-amber-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <span>{TIBETAN_STRINGS.whyThonmi}</span>
+        </button>
+
+        <button
+          onClick={onShowHow}
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
+        >
+          <div className="w-8 h-8 rounded-xl bg-indigo-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+          </div>
+          <span>{TIBETAN_STRINGS.howItWorks}</span>
+        </button>
+
+        <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-3 py-4 px-5 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 transition-all rounded-[1.5rem] text-white text-lg font-bold shadow-2xl shadow-amber-100 dark:shadow-black/50 active:scale-[0.96] group"
+          className="w-full flex items-center justify-center gap-3 py-4 px-5 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 transition-all rounded-[1.5rem] text-white text-lg font-bold shadow-2xl shadow-amber-100 dark:shadow-black/50 active:scale-[0.96] group mt-2"
         >
           <span className="text-2xl leading-none group-hover:rotate-90 transition-transform duration-500">+</span>
           <span>{TIBETAN_STRINGS.newChat}</span>
