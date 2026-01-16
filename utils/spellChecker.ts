@@ -1,4 +1,6 @@
 
+import { ewtsToUnicode } from './wylie';
+
 /**
  * Tibetan Orthographic Spell Checker
  * Validates syllables (tsheg-bar) based on classical Sum-cu-pa (སུམ་ཅུ་པ) 
@@ -47,6 +49,10 @@ export interface SpellResult {
   invalidSyllables: string[];
 }
 
+/**
+ * Checks Tibetan text for spelling errors.
+ * Now supports both Unicode Tibetan and EWTS (Wylie) input.
+ */
 export function checkTibetanSpelling(text: string): SpellResult {
   if (!text) return { isValid: true, errors: [], invalidSyllables: [] };
 
@@ -56,7 +62,19 @@ export function checkTibetanSpelling(text: string): SpellResult {
   const errors: string[] = [];
 
   for (const syl of syllables) {
-    const errorMsg = validateSyllable(syl);
+    let targetSyl = syl;
+    
+    // Detect if the syllable is in EWTS/Wylie (contains Latin characters)
+    if (/[a-zA-Z]/.test(syl)) {
+      // Convert EWTS to Unicode Tibetan for validation
+      targetSyl = ewtsToUnicode(syl);
+      // Remove trailing tsheg if the converter added one (validation works on raw syllable)
+      if (targetSyl.endsWith('་')) {
+        targetSyl = targetSyl.slice(0, -1);
+      }
+    }
+
+    const errorMsg = validateSyllable(targetSyl);
     if (errorMsg) {
       invalidSyllables.push(syl);
       if (!errors.includes(errorMsg)) errors.push(errorMsg);
@@ -71,7 +89,7 @@ export function checkTibetanSpelling(text: string): SpellResult {
 }
 
 /**
- * Core validation logic for a single Tibetan syllable.
+ * Core validation logic for a single Tibetan syllable string (Unicode).
  */
 function validateSyllable(syl: string): string | null {
   // 1. Skip if purely non-Tibetan
