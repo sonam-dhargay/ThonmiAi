@@ -135,6 +135,34 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="p-6 bg-red-50/30 dark:bg-stone-900/50 backdrop-blur-md border-t border-red-50/50 dark:border-stone-800 flex flex-col gap-3">
+        {/* Account Section */}
+        <div className="bg-white/60 dark:bg-stone-800/60 p-4 rounded-3xl border border-red-50 dark:border-stone-700 shadow-sm mb-1">
+          <h3 className="text-[10px] font-black text-slate-400 dark:text-stone-500 uppercase tracking-widest mb-3 px-1 flex items-center justify-between">
+            {TIBETAN_STRINGS.account}
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></div>
+          </h3>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={() => console.log('Login clicked')}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-white dark:bg-stone-700 border border-red-100 dark:border-stone-600 rounded-2xl text-slate-700 dark:text-stone-200 text-sm font-bold hover:shadow-md hover:border-amber-200 dark:hover:border-amber-800 transition-all active:scale-[0.97]"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              {TIBETAN_STRINGS.login}
+            </button>
+            <button
+              onClick={() => console.log('Signup clicked')}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white rounded-2xl text-sm font-bold shadow-lg shadow-amber-100 dark:shadow-black/20 hover:shadow-xl transition-all active:scale-[0.97]"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+              {TIBETAN_STRINGS.signup}
+            </button>
+          </div>
+        </div>
+
         <button
           onClick={onResetApp}
           className="w-full flex items-center justify-start gap-4 py-3 px-5 text-slate-400 dark:text-stone-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 transition-all rounded-2xl text-xs font-bold uppercase tracking-widest border border-transparent hover:border-red-100 dark:hover:border-stone-700"

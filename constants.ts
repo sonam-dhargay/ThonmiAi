@@ -50,6 +50,11 @@ export const TIBETAN_STRINGS = {
   resetConfirm: "ཁྱེད་ཀྱིས་གནས་ཚུལ་ཡོད་ཚད་གསུབ་འདོད་པ་ངེས་གཏན་ཡིན་ནམ། བྱ་འདི་སླར་གསོ་བྱེད་མི་ཐུབ།",
   aiCaveat: "མིས་བཟོས་རིག་ནུས་ཀྱིས་ནོར་འཁྲུལ་བཟོ་སྲིད་པས་དེ་དོན་དགོངས་འཇགས་ཞུ།",
   
+  // Auth (New)
+  login: "ནང་ལ་འཛུལ།",
+  signup: "ཐོ་འགོད།",
+  account: "རྩིས་ཐོ།",
+
   // Wylie Guide
   wylieGuide: "ཝ་ལི་སྦྱོང་ཚུལ།",
   wylieConsonants: "གསལ་བྱེད།",
@@ -83,7 +88,7 @@ export const TIBETAN_STRINGS = {
   examplePromptsNote: "གོང་གསལ་ནི་དཔེ་མཚོན་ཙམ་ལཨ། ཅིཡང་འདྲི་ཆོག",
   
   // Keyboards
-  kbEwts: "ཝཡིལི། (Wylie)",
+  kbEwts: "ཝཝཡིལི། (Wylie)",
   kbTibetan: "བོད་ཡིག",
   
   // Dictionary
