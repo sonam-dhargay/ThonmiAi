@@ -20,11 +20,16 @@ import { checkTibetanSpelling, SpellResult } from './utils/spellChecker';
 type ViewMode = 'chat' | 'about' | 'why' | 'how';
 type ThemeMode = 'light' | 'dark';
 
+interface User {
+  name: string;
+}
+
 const App: React.FC = () => {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('chat');
   const [theme, setTheme] = useState<ThemeMode>('light');
+  const [user, setUser] = useState<User | null>(null); // Mock user state for next upgrade
   const [inputValue, setInputValue] = useState('');
   const [wylieBuffer, setWylieBuffer] = useState('');
   const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>('tibetan');
@@ -364,6 +369,15 @@ const App: React.FC = () => {
     }
   };
 
+  const handleMockLogin = () => {
+    setUser({ name: "བཀྲ་ཤིས" });
+    setIsSidebarOpen(false);
+  };
+
+  const handleMockSignup = () => {
+    alert("ཐོ་འགོད་ཀྱི་མ་ལག་རྗེས་མའི་ནང་དུ་ཐོན་གྱི་རེད།");
+  };
+
   const renderContent = () => {
     switch (viewMode) {
       case 'about':
@@ -380,7 +394,7 @@ const App: React.FC = () => {
               <Logo className="w-14 h-14 md:w-16 md:h-16 drop-shadow-xl relative z-10 transition-all duration-500" />
             </div>
             <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-stone-100 mb-1 md:mb-2 tracking-tight leading-tight z-10 transition-all">
-              {TIBETAN_STRINGS.welcomeTitle}
+              {user ? `${user.name}ལགས། ${TIBETAN_STRINGS.welcomeTitle}` : TIBETAN_STRINGS.welcomeTitle}
             </h3>
             <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-4 md:mb-8 text-base md:text-lg leading-relaxed font-medium Tibetan-text z-10 transition-all">
               {TIBETAN_STRINGS.welcomeSubtitle}
@@ -446,7 +460,10 @@ const App: React.FC = () => {
         onShowWhy={handleShowWhy}
         onShowHow={handleShowHow}
         onResetApp={handleResetApp}
+        onLogin={handleMockLogin}
+        onSignup={handleMockSignup}
         isOpen={isSidebarOpen}
+        isLoggedIn={!!user}
       />
 
       <main className="flex-1 flex flex-col relative min-w-0 bg-white dark:bg-stone-900 transition-colors duration-300">
