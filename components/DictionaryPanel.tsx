@@ -323,8 +323,20 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
               return (
                 <div 
                   key={`${entry.term}-${idx}`}
-                  className="relative p-6 bg-white dark:bg-stone-800 border rounded-[2.2rem] shadow-sm group transition-all transform duration-300 border-red-50 dark:border-stone-700 hover:border-red-100 dark:hover:border-red-800 hover:shadow-xl hover:-translate-y-1"
+                  className={`relative p-6 border rounded-[2.2rem] shadow-sm group transition-all transform duration-300 ${
+                    entry.isUserAdded 
+                      ? 'bg-amber-50/40 dark:bg-stone-800/60 border-amber-100 dark:border-amber-900/30' 
+                      : 'bg-white dark:bg-stone-800 border-red-50 dark:border-stone-700'
+                  } hover:border-red-100 dark:hover:border-red-800 hover:shadow-xl hover:-translate-y-1`}
                 >
+                  {entry.isUserAdded && (
+                    <div className="absolute top-4 right-6 flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 dark:bg-amber-900/40 rounded-full border border-amber-200 dark:border-amber-900/50">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-[8px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-tighter">User</span>
+                    </div>
+                  )}
                   <div className="flex flex-col gap-1 mb-3">
                     {entry.englishTerm && (
                       <span className="text-sm font-bold text-amber-600 dark:text-amber-500 tracking-wide uppercase">{entry.englishTerm}</span>
