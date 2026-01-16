@@ -83,7 +83,7 @@ export const TIBETAN_STRINGS = {
   examplePromptsNote: "གོང་གསལ་ནི་དཔེ་མཚོན་ཙམ་ལཨ། ཅིཡང་འདྲི་ཆོག",
   
   // Keyboards
-  kbEwts: "Wylie (EWTS)",
+  kbEwts: "ཝཡིལི། (Wylie)",
   kbTibetan: "བོད་ཡིག",
   
   // Dictionary
@@ -118,7 +118,7 @@ export const TIBETAN_STRINGS = {
   aboutMainGoal: "དམིགས་ཡུལ་གཙོ་བོ།",
   aboutMainGoalDesc: "བོད་ཀྱི་སྐད་ཡིག་འདི་ཉིད་དུས་རབས་ཉེར་གཅིག་པའི་རིག་ནུས་ལག་རྩལ་དང་ མཐུན་པར་བཟོ་རྒྱུ།",
   aboutUsers: "བཀོལ་སྤྱོད་བྱེད་ མཁན།",
-  aboutUsersDesc: "བོད་ཡིག་ལ་དགའ་བའི་སློབ་གཉེར་བ་དང་། ཤེས་ཡོན་ཅན། མི་ མང་ཡོངས་ལ་དམིགས་ཡོད།",
+  aboutUsersDesc: "བོད་ཡིག་ལ་དགའ་བའི་སློབ་ gnyer བ་དང་། ཤེས་ཡོན་ཅན། མི་ མང་ཡོངས་ལ་དམིགས་ཡོད།",
 
   // Why Thonmi Content
   whyThonmiTitle: "ཐོན་མི་AI ཅི་ཕྱིར་གལ་ཆེ་བ་ཡིན་ནམ།",
