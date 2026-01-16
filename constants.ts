@@ -53,7 +53,7 @@ export const TIBETAN_STRINGS = {
   // Auth (New)
   login: "ནང་ལ་འཛུལ།",
   signup: "ཐོ་འགོད།",
-  account: "རྩིས་ཐོ།",
+  account: "ཐོ་གཞུང་།",
 
   // Wylie Guide
   wylieGuide: "ཝ་ལི་སྦྱོང་ཚུལ།",
@@ -88,7 +88,7 @@ export const TIBETAN_STRINGS = {
   examplePromptsNote: "གོང་གསལ་ནི་དཔེ་མཚོན་ཙམ་ལཨ། ཅིཡང་འདྲི་ཆོག",
   
   // Keyboards
-  kbEwts: "ཝཝཡིལི། (Wylie)",
+  kbEwts: "ཝཡིལི། (Wylie)",
   kbTibetan: "བོད་ཡིག",
   
   // Dictionary

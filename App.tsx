@@ -393,7 +393,7 @@ const App: React.FC = () => {
               <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-10 rounded-full"></div>
               <Logo className="w-14 h-14 md:w-16 md:h-16 drop-shadow-xl relative z-10 transition-all duration-500" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-stone-100 mb-1 md:mb-2 tracking-tight leading-tight z-10 transition-all">
+            <h3 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-stone-100 mb-1 md:mb-2 tracking-tight leading-tight z-10 transition-all Tibetan-text">
               {user ? `${user.name}ལགས། ${TIBETAN_STRINGS.welcomeTitle}` : TIBETAN_STRINGS.welcomeTitle}
             </h3>
             <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-4 md:mb-8 text-base md:text-lg leading-relaxed font-medium Tibetan-text z-10 transition-all">
