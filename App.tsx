@@ -13,7 +13,7 @@ import PredictiveBar from './components/PredictiveBar';
 import Logo from './components/Logo';
 import { Message, ChatSession, KeyboardMode } from './types';
 import { TIBETAN_STRINGS, COMMON_TIBETAN_WORDS } from './constants';
-import { generateStreamTibetanResponse, getDynamicExamplePrompts, isImageRequest, generateImage } from './services/geminiService';
+import { generateStreamTibetanResponse, getDynamicExamplePrompts, isImageRequest, generateImage, generateChatTitle } from './services/geminiService';
 import { ewtsToUnicode } from './utils/wylie';
 import { checkTibetanSpelling, SpellResult } from './utils/spellChecker';
 
@@ -267,7 +267,10 @@ const App: React.FC = () => {
     setIsLoading(true);
 
     let sessionId = activeSessionId;
+    let isNewSession = false;
+
     if (!sessionId) {
+      isNewSession = true;
       sessionId = Date.now().toString();
       const newSession: ChatSession = {
         id: sessionId,
@@ -278,11 +281,24 @@ const App: React.FC = () => {
       setSessions(prev => [newSession, ...prev]);
       setActiveSessionId(sessionId);
     } else {
+      const session = sessions.find(s => s.id === sessionId);
+      if (session && session.messages.length === 0) {
+        isNewSession = true;
+      }
       setSessions(prev => prev.map(s => 
         s.id === sessionId 
           ? { ...s, messages: [...s.messages, userMsg], title: s.messages.length === 0 ? currentPrompt.slice(0, 30) : s.title } 
           : s
       ));
+    }
+
+    // Generate descriptive title for new session in the background
+    if (isNewSession) {
+      generateChatTitle(currentPrompt).then(newTitle => {
+        setSessions(prev => prev.map(s => 
+          s.id === sessionId ? { ...s, title: newTitle } : s
+        ));
+      });
     }
 
     try {

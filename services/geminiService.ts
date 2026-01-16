@@ -68,6 +68,27 @@ export const generateStreamTibetanResponse = async function* (
 };
 
 /**
+ * Generates a concise title for a chat session in Tibetan.
+ */
+export const generateChatTitle = async (firstPrompt: string): Promise<string> => {
+  const ai = getAIClient();
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: `Generate a very short, concise title (maximum 4-5 words) in Tibetan Unicode for a chat session that begins with this request: "${firstPrompt}". Respond only with the Tibetan text, no translation or explanation.`,
+      config: {
+        systemInstruction: "You are a helpful assistant that summarizes user intents into short Tibetan titles.",
+        temperature: 0.5,
+      },
+    });
+    return response.text?.trim() || firstPrompt.slice(0, 20);
+  } catch (error) {
+    console.error("Title generation failed:", error);
+    return firstPrompt.slice(0, 20);
+  }
+};
+
+/**
  * Detects if the user wants to generate an image based on keywords.
  * Expanded with more Tibetan keywords.
  */
