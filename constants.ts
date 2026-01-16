@@ -69,7 +69,7 @@ export const TIBETAN_STRINGS = {
   emptyHistory: "ལོ་རྒྱུས་མི་འདུག",
   deleteChat: "བཅར་འདྲི་གསུབ་པ།",
   whyThonmi: "ཐོན་མི་AI དགོས་དོན་ཅི།",
-  howItWorks: "འདི་ཇི་ལྟར་བྱེད་དམ།",
+  howItWorks: "འདི་ཇི་ལྟར་བཀོལ།",
   
   // Welcome View
   welcomeTitle: "ཅི་ཞིག་ཤེས་འདོད་འདུག",
@@ -85,7 +85,6 @@ export const TIBETAN_STRINGS = {
   // Keyboards
   kbEwts: "Wylie (EWTS)",
   kbTibetan: "བོད་ཡིག",
-  kbEnglish: "English",
   
   // Dictionary
   dictionary: "བརྡ་དག་ཀུན་གསལ།",

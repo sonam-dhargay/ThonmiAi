@@ -108,13 +108,9 @@ const App: React.FC = () => {
   }, [sessions]);
 
   useEffect(() => {
-    if (keyboardMode !== 'english') {
-      const result = checkTibetanSpelling(inputValue);
-      setSpellResult(result);
-    } else {
-      setSpellResult({ isValid: true, errors: [], invalidSyllables: [] });
-    }
-  }, [inputValue, keyboardMode]);
+    const result = checkTibetanSpelling(inputValue);
+    setSpellResult(result);
+  }, [inputValue]);
 
   const refreshPrompts = async () => {
     setIsRefreshingPrompts(true);
@@ -145,7 +141,7 @@ const App: React.FC = () => {
 
   // Predictive Text Logic
   const suggestions = useMemo(() => {
-    if (keyboardMode === 'english' || !inputValue) return [];
+    if (!inputValue) return [];
     
     const lastWordMatch = inputValue.match(/[^\u0F0B\u0F0D\s]+$/);
     const lastWord = lastWordMatch ? lastWordMatch[0] : "";
@@ -155,7 +151,7 @@ const App: React.FC = () => {
     return COMMON_TIBETAN_WORDS.filter(w => 
       w.startsWith(lastWord) && w !== lastWord
     ).slice(0, 8);
-  }, [inputValue, keyboardMode]);
+  }, [inputValue]);
 
   const handleSuggestionSelect = (word: string) => {
     const lastWordMatch = inputValue.match(/[^\u0F0B\u0F0D\s]+$/);
@@ -225,12 +221,9 @@ const App: React.FC = () => {
       }
       setWylieBuffer(newBuffer);
       setInputValue(ewtsToUnicode(newBuffer));
-    } else if (keyboardMode === 'tibetan') {
+    } else {
       const convertedVal = val.replace(/ /g, '་');
       setInputValue(convertedVal);
-      setWylieBuffer('');
-    } else {
-      setInputValue(val);
       setWylieBuffer('');
     }
   };
@@ -507,7 +500,7 @@ const App: React.FC = () => {
         {viewMode === 'chat' && (
           <div className="p-4 md:p-6 bg-transparent sticky bottom-0 z-20 pointer-events-none">
             <div className="max-w-4xl mx-auto space-y-3 pointer-events-auto flex flex-col">
-              {!spellResult.isValid && keyboardMode !== 'english' && (
+              {!spellResult.isValid && (
                 <div className="animate-slide-up bg-red-50/90 dark:bg-stone-900/90 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50 dark:shadow-black/50 mb-2">
                   <div className="flex items-center gap-3 mb-2 text-red-600 dark:text-red-400 font-bold text-xs uppercase tracking-widest">
                     <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
@@ -526,13 +519,13 @@ const App: React.FC = () => {
 
               <div className="order-1 flex items-center justify-between px-3 bg-white/70 dark:bg-stone-800/70 backdrop-blur-xl rounded-[1.5rem] p-2 border border-red-50 dark:border-stone-700 shadow-xl transition-colors duration-300">
                 <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
-                  {(['tibetan', 'ewts', 'english'] as KeyboardMode[]).map((m) => (
+                  {(['tibetan', 'ewts'] as KeyboardMode[]).map((m) => (
                     <button
                       key={m}
                       onClick={() => setKeyboardMode(m)}
                       className={`text-[10px] md:text-[11px] px-3 md:px-4 py-2 rounded-xl font-bold transition-all whitespace-nowrap ${keyboardMode === m ? 'bg-red-900 dark:bg-red-700 text-white shadow-lg' : 'text-slate-500 dark:text-stone-400 hover:bg-white dark:hover:bg-stone-700'}`}
                     >
-                      {m === 'ewts' ? TIBETAN_STRINGS.kbEwts : m === 'tibetan' ? TIBETAN_STRINGS.kbTibetan : TIBETAN_STRINGS.kbEnglish}
+                      {m === 'ewts' ? TIBETAN_STRINGS.kbEwts : TIBETAN_STRINGS.kbTibetan}
                     </button>
                   ))}
                 </div>
@@ -550,7 +543,7 @@ const App: React.FC = () => {
 
                   <button onClick={() => setShowVirtualKeyboard(!showVirtualKeyboard)} className={`p-2 md:p-2.5 rounded-xl transition-all ${showVirtualKeyboard ? 'bg-red-100 dark:bg-stone-700 text-red-900 dark:text-stone-100 shadow-inner' : 'text-slate-400 hover:bg-red-50 dark:hover:bg-stone-700'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2-2v8a2 2 0 00-2 2z" />
                     </svg>
                   </button>
                 </div>
@@ -560,7 +553,7 @@ const App: React.FC = () => {
                 <PredictiveBar 
                   suggestions={suggestions} 
                   onSelect={handleSuggestionSelect} 
-                  isVisible={keyboardMode !== 'english'}
+                  isVisible={true}
                 />
               </div>
 
@@ -573,7 +566,7 @@ const App: React.FC = () => {
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
                     placeholder={isImageMode ? TIBETAN_STRINGS.imageGenPlaceholder : (keyboardMode === 'ewts' ? TIBETAN_STRINGS.wyliePlaceholder : TIBETAN_STRINGS.inputPlaceholder)}
                     rows={1}
-                    className={`w-full bg-white dark:bg-stone-800 border ${isImageMode ? 'border-amber-200 dark:border-amber-700' : (!spellResult.isValid && keyboardMode !== 'english' ? 'border-red-200 dark:border-red-900/50' : 'border-red-100 dark:border-stone-700')} focus:border-red-900 dark:focus:border-red-600 focus:ring-4 md:focus:ring-8 rounded-[2rem] md:rounded-[2.5rem] py-4 md:py-6 pl-6 md:pl-8 pr-16 md:pr-20 text-xl md:text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl Tibetan-text`}
+                    className={`w-full bg-white dark:bg-stone-800 border ${isImageMode ? 'border-amber-200 dark:border-amber-700' : (!spellResult.isValid ? 'border-red-200 dark:border-red-900/50' : 'border-red-100 dark:border-stone-700')} focus:border-red-900 dark:focus:border-red-600 focus:ring-4 md:focus:ring-8 rounded-[2rem] md:rounded-[2.5rem] py-4 md:py-6 pl-6 md:pl-8 pr-16 md:pr-20 text-xl md:text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl Tibetan-text`}
                     style={{ minHeight: '64px', maxHeight: '200px' }}
                   />
                   <button

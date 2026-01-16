@@ -15,7 +15,7 @@ export interface ChatSession {
   createdAt: number;
 }
 
-export type KeyboardMode = 'ewts' | 'tibetan' | 'english';
+export type KeyboardMode = 'ewts' | 'tibetan';
 
 export interface DictionaryEntry {
   term: string; // Used as the primary Tibetan term

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { TIBETAN_VIRTUAL_KEYS, TIBETAN_SUBJOINED_KEYS, ENGLISH_VIRTUAL_KEYS } from '../utils/wylie';
+import { TIBETAN_VIRTUAL_KEYS, TIBETAN_SUBJOINED_KEYS } from '../utils/wylie';
 import { KeyboardMode } from '../types';
 
 interface VirtualKeyboardProps {
@@ -12,23 +12,13 @@ interface VirtualKeyboardProps {
 const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ mode, onKeyPress, onBackspace }) => {
   const [isShifted, setIsShifted] = useState(false);
 
-  const getLayout = () => {
-    if (mode === 'english') {
-      return ENGLISH_VIRTUAL_KEYS.map(row => 
-        isShifted ? row.map(key => key.toUpperCase()) : row
-      );
-    }
-    return isShifted ? TIBETAN_SUBJOINED_KEYS : TIBETAN_VIRTUAL_KEYS;
-  };
-
-  const currentLayout = getLayout();
-  const isEnglish = mode === 'english';
+  const currentLayout = isShifted ? TIBETAN_SUBJOINED_KEYS : TIBETAN_VIRTUAL_KEYS;
 
   return (
     <div className="bg-red-50/60 dark:bg-stone-950/60 backdrop-blur-2xl p-1.5 md:p-4 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/50 dark:border-stone-800 mt-2 flex flex-col gap-0.5 md:gap-2 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] dark:shadow-black/50 max-w-full overflow-hidden select-none animate-slide-up transition-colors duration-300">
       {currentLayout.map((row, i) => (
         <div key={i} className="flex justify-center gap-0.5 md:gap-2">
-          {((!isEnglish && i === 2) || (isEnglish && i === 2)) && (
+          {i === 2 && (
             <button
               type="button"
               onClick={() => setIsShifted(!isShifted)}
@@ -38,7 +28,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ mode, onKeyPress, onB
                 : 'bg-white dark:bg-stone-800 border-red-50 dark:border-stone-700 text-red-800 dark:text-red-400 hover:bg-red-50/50 dark:hover:bg-stone-700/50'
               }`}
             >
-              {isEnglish ? '↑' : 'སྒྱུར།'}
+              སྒྱུར།
             </button>
           )}
 
@@ -48,7 +38,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ mode, onKeyPress, onB
               type="button"
               onClick={() => {
                 onKeyPress(key);
-                if (isShifted && !isEnglish) setIsShifted(false);
+                if (isShifted) setIsShifted(false);
               }}
               className={`min-w-[24px] h-10 md:min-w-[48px] md:h-16 bg-white dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-lg md:rounded-[1.2rem] flex items-center justify-center text-lg md:text-2xl font-medium transition-all shadow-sm active:scale-90 hover:shadow-lg dark:hover:shadow-black/40 hover:border-amber-100 dark:hover:border-amber-900/50 flex-1 max-w-[60px] text-slate-800 dark:text-stone-100`}
             >
@@ -56,7 +46,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ mode, onKeyPress, onB
             </button>
           ))}
 
-          {((!isEnglish && i === 3) || (isEnglish && i === 2)) && (
+          {i === 3 && (
             <button
               type="button"
               onClick={onBackspace}
@@ -74,9 +64,9 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ mode, onKeyPress, onB
         <button
           type="button"
           onClick={() => onKeyPress(' ')}
-          className={`h-10 md:h-16 bg-white/95 dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-lg md:rounded-[1.2rem] flex items-center justify-center text-slate-400 dark:text-stone-500 hover:bg-white dark:hover:bg-stone-700 hover:shadow-xl shadow-md active:scale-[0.98] transition-all font-bold text-[9px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.25em] ${isEnglish ? 'w-52 md:w-96' : 'w-36 md:w-64'}`}
+          className="h-10 md:h-16 w-36 md:w-64 bg-white/95 dark:bg-stone-800 border border-red-50 dark:border-stone-700 rounded-lg md:rounded-[1.2rem] flex items-center justify-center text-slate-400 dark:text-stone-500 hover:bg-white dark:hover:bg-stone-700 hover:shadow-xl shadow-md active:scale-[0.98] transition-all font-bold text-[9px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.25em]"
         >
-          {isEnglish ? 'Space' : 'བར་སྟོང་།'}
+          བར་སྟོང་།
         </button>
       </div>
     </div>
