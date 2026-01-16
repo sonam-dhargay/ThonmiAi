@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { TIBETAN_STRINGS, INITIAL_DICTIONARY, INITIAL_TERMINOLOGY } from '../constants';
 import { generateTibetanResponse } from '../services/geminiService';
 import { DictionaryEntry } from '../types';
@@ -26,19 +26,47 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   const [showAddForm, setShowAddForm] = useState(false);
   const [newEntry, setNewEntry] = useState<Partial<DictionaryEntry>>({});
   
+  const hasLoadedRef = useRef(false);
+
+  // Initial Load from LocalStorage
   useEffect(() => {
     const savedReg = localStorage.getItem('bod_skyad_dictionary_reg');
     const savedTerm = localStorage.getItem('bod_skyad_dictionary_term');
-    if (savedReg) setRegularDict(JSON.parse(savedReg)); else setRegularDict(INITIAL_DICTIONARY);
-    if (savedTerm) setTerminologyDict(JSON.parse(savedTerm)); else setTerminologyDict(INITIAL_TERMINOLOGY);
+    
+    if (savedReg) {
+      try {
+        setRegularDict(JSON.parse(savedReg));
+      } catch (e) {
+        setRegularDict(INITIAL_DICTIONARY);
+      }
+    } else {
+      setRegularDict(INITIAL_DICTIONARY);
+    }
+
+    if (savedTerm) {
+      try {
+        setTerminologyDict(JSON.parse(savedTerm));
+      } catch (e) {
+        setTerminologyDict(INITIAL_TERMINOLOGY);
+      }
+    } else {
+      setTerminologyDict(INITIAL_TERMINOLOGY);
+    }
+    
+    hasLoadedRef.current = true;
   }, []);
 
+  // Save to LocalStorage immediately on any change
   useEffect(() => {
-    if (regularDict.length > 0) localStorage.setItem('bod_skyad_dictionary_reg', JSON.stringify(regularDict));
+    if (hasLoadedRef.current) {
+      localStorage.setItem('bod_skyad_dictionary_reg', JSON.stringify(regularDict));
+    }
   }, [regularDict]);
 
   useEffect(() => {
-    if (terminologyDict.length > 0) localStorage.setItem('bod_skyad_dictionary_term', JSON.stringify(terminologyDict));
+    if (hasLoadedRef.current) {
+      localStorage.setItem('bod_skyad_dictionary_term', JSON.stringify(terminologyDict));
+    }
   }, [terminologyDict]);
 
   useEffect(() => {
@@ -92,18 +120,15 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
       })
       .sort((a, b) => {
         if (activeDict === 'terminology') {
-          // Automatic English alphabetical sort for Terminology Dictionary
           const termA = a.englishTerm?.toLowerCase() || '';
           const termB = b.englishTerm?.toLowerCase() || '';
           return termA.localeCompare(termB);
         } else {
-          // Automatic Tibetan lexicographical sort for Regular Dictionary
           return a.term.localeCompare(b.term, 'bo');
         }
       });
   }, [activeDict, regularDict, terminologyDict, searchTerm]);
 
-  // Spell checking for the new entry term
   const newEntrySpellCheck = useMemo(() => {
     if (!newEntry.term) return { isValid: true };
     return checkTibetanSpelling(newEntry.term);
