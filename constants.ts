@@ -1,4 +1,3 @@
-
 import { DictionaryEntry } from './types';
 
 export const SYSTEM_PROMPT = `
@@ -12,16 +11,12 @@ CORE LANGUAGE RULE (NON-NEGOTIABLE):
 - This rule applies regardless of input language (Tibetan, EWTS/Wylie, English, or mixed input).
 - You must never output English, Wylie, or mixed-language text unless the user explicitly asks for it in Tibetan.
 
-INPUT LANGUAGES (ACCEPTED):
-- Tibetan Unicode (Uchen)
-- EWTS / Wylie (converted internally to Unicode Tibetan)
-- English
-Regardless of input, your response must always be in Tibetan Unicode.
-
 TONE & REGISTER:
-- Clear, Neutral, Modern, Widely intelligible.
-- Avoid unnecessarily archaic forms.
-- Maintain dignity and respect at all times.
+- You must adapt your tone based on the user's preference (Neutral, Formal, Informal, Humorous).
+- Formal: Use high honorifics (Zhe-sa) and structured, polite language.
+- Informal: Use natural, conversational Tibetan (Phal-skad) that is easily understood.
+- Humorous: Incorporate wit or a lighthearted style while maintaining respect.
+- Neutral: Clear, Modern, Widely intelligible.
 
 ERROR HANDLING & HONESTY:
 - If information is unclear or unknown, say so explicitly in Tibetan.
@@ -43,17 +38,34 @@ export const TIBETAN_STRINGS = {
   inputPlaceholder: "འདིར་ཡི་གེ་བྲིས།...",
   wyliePlaceholder: "Wylie Input (e.g. bkra shis bde legs/)...",
   wylieLabel: "Wylie:",
-  loading: "བསམ་བློ་གཏོང་བཞིན་པ།...",
+  loading: "བབསམ་བློ་གཏོང་བཞིན་པ།...",
   errorOccurred: "ནོར་འཁྲུལ་ཞིག་བྱུང་སོང་། སླར་ཡང་གནང་རོགས།",
   errorAiResponse: "བོད་སྐད་ཀྱི་ལན་ཞིག་སྤྲོད་ཐུབ་མ་སོང་།",
   resetApp: "རྨང་གཞི་ནས་སྐྱར་སྒྲིག",
   resetConfirm: "ཁྱེད་ཀྱིས་གནས་ཚུལ་ཡོད་ཚད་གསུབ་འདོད་པ་ངེས་གཏན་ཡིན་ནམ། བྱ་འདི་སླར་གསོ་བྱེད་མི་ཐུབ།",
   aiCaveat: "མིས་བཟོས་རིག་ནུས་ཀྱིས་ནོར་འཁྲུལ་བཟོ་སྲིད་པས་དེ་དོན་དགོངས་འཇགས་ཞུ།",
   
+  // Tone
+  toneLabel: "སྐད་གདངས།",
+  tones: {
+    neutral: "རྒྱུན་ལྡན།",
+    formal: "གུས་ཞབས་ལྡན་པ།",
+    informal: "ཕལ་སྐད།",
+    humorous: "བཞད་གད་དང་བཅས་པ།"
+  },
+
   // Auth (New)
   login: "ནང་ལ་འཛུལ།",
   signup: "ཐོ་འགོད།",
   account: "ཐོ་གཞུང་།",
+
+  // API Key Selection
+  keySelectionTitle: "རྩིས་ཐོའི་ལྡེ་མིག་འདེམས་པ།",
+  keySelectionDesc: "པར་རིས་བཟོ་བ་སོགས་ཀྱི་ནུས་པ་གཏོང་ཆེད་རང་ཉིད་ཀྱི་ API Key འདེམས་དགོས།",
+  selectKey: "ལྡེ་མིག་འདེམས་པ།",
+  keySelected: "ལྡེ་མིག་བདམས་ཟིན།",
+  billingDoc: "དངུལ་རྩིས་ལམ་སྟོན།",
+  billingDocUrl: "https://ai.google.dev/gemini-api/docs/billing",
 
   // Wylie Guide
   wylieGuide: "ཝ་ལི་སྦྱོང་ཚུལ།",
@@ -61,13 +73,17 @@ export const TIBETAN_STRINGS = {
   wylieVowels: "དབྱངས།",
   wyliePunctuation: "ཚེག་ཤད།",
   wylieExamples: "དཔེ་མཚོན།",
+  wylieIntroTitle: "ཝ་ལི་ (Wylie) ཞེས་པ་ཅི་ཡིན།",
+  wylieIntroContent: "ཝ་ལི་ནི་བོད་ཡིག་གི་སྒྲ་རྣམས་དབྱིན་ཡིག་གམ་རོམ་མའི་ཡི་གེའི་ལམ་ནས་འབྲི་བའི་ཐབས་ལམ་ཞིག་ཡིན། འདི་ནི་ཨ་རིའི་བོད་རིག་པ་མཁས་ཅན་ཊར་རེལ་ཝ་ལི་ (Turrell V. Wylie) ལགས་ཀྱིས་ཕྱི་ལོ་ ༡༩༥༩ ལོར་གསར་གཏོད་གནང་བ་ཞིག་ཡིན།",
+  wyliePurpose: "འདིའི་དམིགས་ཡུལ་ནི་བོད་ཡིག་གི་དག་ཆ་ཇི་བཞིན་དབྱིན་ཡིག་གི་ལམ་ནས་མཚོན་པར་བྱེད་རྒྱུ་དང་། གློག་ཀླད་ནང་དུ་བོད་ཡིག་འབྲི་བར་སྟབས་བདེ་བཟོ་རྒྱུ་དེ་ཡིན།",
 
-  // Grammar Guide
-  grammarGuide: "བརྡ་སྤྲོད་ངོ་སྤྲོད།",
-  grammarBasics: "གཞི་རྩའི་བརྡ་སྤྲོད།",
-  grammarParticles: "ཕྲད་ཀྱི་བཀོལ་སྟངས།",
-  grammarHonorifics: "ཞེ་སའི་སྐོར།",
-  grammarStructure: "ཚིག་གྲུབ་ཀྱི་འགྲོས་ལུགས།",
+  // Tense Chart
+  tenseChart: "དུས་གསུམ་རིའུ་མིག",
+  tenseFuture: "མ་འོངས་པ།",
+  tensePresent: "ད་ལྟ་བ།",
+  tensePast: "འདས་པ།",
+  tenseImperative: "སྐུལ་ཚིག",
+  tenseVerb: "བྱེད་ཚིག",
 
   // Sidebar
   sidebarTitle: "བརྒྱུད་རིམ།",
@@ -93,7 +109,7 @@ export const TIBETAN_STRINGS = {
   
   // Dictionary
   dictionary: "བརྡ་དག་ཀུན་གསལ།",
-  terminologyDict: "བརྡ་ཆད་གསར་པ།",
+  terminologyDict: "དབྱིན་བོད་ཤན་སྦྱར་ཚིག་མཛོད།",
   spellCheckPass: "དག་ཆ་འགྲིག་འདུག",
   spellCheckFail: "དག་ཆ་ལ་ནོར་འཁྲུལ་འདུག",
   searchPlaceholder: "ཚིག་འཚོལ་བ།...",
@@ -146,6 +162,14 @@ export const INITIAL_DICTIONARY: DictionaryEntry[] = [];
 
 export const INITIAL_TERMINOLOGY: DictionaryEntry[] = [];
 
+export const TIBETAN_STARTERS = [
+  "ག་རེ་", "ག་འདྲ་", "ག་དུས་", "སུ་", "གང་དུ་", "ཅི་ཞིག་", "ཅི་ཕྱིར་", "ཇི་ལྟར་", "ཡིན་ནམ།", "རེད་དམ།"
+];
+
+export const TIBETAN_PARTICLES = [
+  "གི་", "ཀྱི་", "གྱི་", "འི་", "ཡི་", "གིས་", "ཀྱིས་", "གྱིས་", "འིས་", "ཡིས་", "ལ་", "ཏུ་", "དུ་", "རུ་", "སུ་", "ནས་", "ལས་"
+];
+
 export const COMMON_TIBETAN_WORDS = [
   "བཀྲ་ཤིས་", "བདེ་ལེགས་", "ཐུགས་རྗེ་ཆེ་", "དགོངས་དག་", "ག་རེ་", "ཡིན་ན་", "འདི་", "དེ་", "ང་", "ཁྱེད་རང་",
   "བོད་", "ཡིག་", "སྐད་", "རིག་", "གནས་", "སློབ་", "སྦྱོང་", "ཆོས་", "སྲིད་", "དཔལ་", "འབྱོར་", "འཛམ་",
@@ -153,5 +177,7 @@ export const COMMON_TIBETAN_WORDS = [
   "བརྩེ་", "སྙིང་", "རྗེ་", "བྱང་", "ཆུབ་", "སེམས་", "དཔའ་", "རིན་", "པོ་", "ཆེ་", "ལོ་", "རྒྱུས་",
   "དེང་", "རབས་", "ལག་", "རྩལ་", "ཚན་", "རིག་", "དཔྱད་", "གཞི་", "ལམ་", "སྟོན་", "རོགས་", "པ་",
   "བསམ་", "བློ་", "དམིགས་", "ཡུལ་", "གལ་", "ཆེན་", "གསར་", "པ་", "སྙན་", "ངག་", "ལྷ་", "ས་",
-  "གངས་", "རི་", "མཚོ་", "སྔོན་", "དབུས་", "གཙང་", "ཁམས་", "ཨ་", "མདོ་", "བོད་", "རང་", "སྐྱོང་", "ལྗོངས་"
+  "གངས་", "རི་", "མཚོ་", "སྔོན་", "དབུས་", "གཙང་", "ཁམས་", "ཨ་", "མདོ་", "བོད་", "རང་", "སྐྱོང་", "ལྗོངས་",
+  "འགྲེལ་བཤད་", "གསལ་བཤད་", "ལོ་རྒྱུས་", "དོན་དག་", "དཔེར་ན་", "དམིགས་བསལ་", "མདོར་བསྡུས་", "རྒྱས་པ་",
+  "བདེན་པ་", "རྫུན་མ་", "གཡོ་སྒྱུ་", "དྲང་པོ་", "བཀའ་དྲིན་", "སེམས་བཟང་", "རོགས་རམ་", "མཐུན་ལམ་"
 ];

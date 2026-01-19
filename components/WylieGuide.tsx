@@ -67,6 +67,19 @@ const WylieGuide: React.FC<WylieGuideProps> = ({ isOpen, onClose }) => {
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
+          {/* Introduction Section */}
+          <div className="bg-indigo-50/50 dark:bg-indigo-900/20 p-6 rounded-[2rem] border border-indigo-100 dark:border-indigo-900/30">
+            <h4 className="text-lg font-bold text-indigo-900 dark:text-indigo-300 mb-3 Tibetan-text">
+              {TIBETAN_STRINGS.wylieIntroTitle}
+            </h4>
+            <p className="text-base text-slate-700 dark:text-stone-300 Tibetan-text leading-relaxed mb-4">
+              {TIBETAN_STRINGS.wylieIntroContent}
+            </p>
+            <p className="text-base text-slate-700 dark:text-stone-300 Tibetan-text leading-relaxed italic border-l-4 border-indigo-200 dark:border-indigo-800 pl-4">
+              {TIBETAN_STRINGS.wyliePurpose}
+            </p>
+          </div>
+
           {sections.map((section, idx) => (
             <div key={idx}>
               <h4 className="text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-[0.25em] mb-6 flex items-center gap-3">

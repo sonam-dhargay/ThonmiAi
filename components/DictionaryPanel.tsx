@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { TIBETAN_STRINGS, INITIAL_DICTIONARY, INITIAL_TERMINOLOGY } from '../constants';
 import { generateTibetanResponse } from '../services/geminiService';
 import { DictionaryEntry } from '../types';
-import { ewtsToUnicode } from '../utils/wylie';
 import { checkTibetanSpelling } from '../utils/spellChecker';
 
 interface DictionaryPanelProps {
@@ -13,13 +11,10 @@ interface DictionaryPanelProps {
 }
 
 type DictionaryType = 'regular' | 'terminology';
-type SearchMode = 'tibetan' | 'ewts';
 
 const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, initialTerm }) => {
   const [activeDict, setActiveDict] = useState<DictionaryType>('regular');
   const [searchTerm, setSearchTerm] = useState(initialTerm || '');
-  const [searchMode, setSearchMode] = useState<SearchMode>('tibetan');
-  const [wylieSearchBuffer, setWylieSearchBuffer] = useState('');
   const [regularDict, setRegularDict] = useState<DictionaryEntry[]>([]);
   const [terminologyDict, setTerminologyDict] = useState<DictionaryEntry[]>([]);
   const [isDeepLoading, setIsDeepLoading] = useState(false);
@@ -85,24 +80,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
   }, [initialTerm]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    if (searchMode === 'ewts') {
-      const lastConv = searchTerm;
-      let newBuffer = wylieSearchBuffer;
-      if (val.length < lastConv.length) {
-        newBuffer = newBuffer.slice(0, -1);
-      } else {
-        const added = val.slice(lastConv.length);
-        if (/[a-zA-Z0-9'\/\\\[\]+.~;: ]/.test(added)) {
-          newBuffer += added;
-        }
-      }
-      setWylieSearchBuffer(newBuffer);
-      setSearchTerm(ewtsToUnicode(newBuffer));
-    } else {
-      setSearchTerm(val);
-      setWylieSearchBuffer('');
-    }
+    setSearchTerm(e.target.value);
   };
 
   // Automatic sorting logic
@@ -166,7 +144,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
       let prompt = "";
       
       if (activeDict === 'terminology') {
-        prompt = `Provide the Tibetan scientific equivalent and a precise technical definition for the terminology "${searchTerm}" entirely in Tibetan language.`;
+        prompt = `Provide the Tibetan equivalent and a precise dictionary definition for the English term "${searchTerm}" entirely in Tibetan language. List the primary Tibetan term clearly.`;
       } else {
         prompt = `Please provide a lexicographical definition, spelling notes (orthography), and grammatical usage for the Tibetan word "${searchTerm}" entirely in Tibetan language.`;
       }
@@ -174,6 +152,8 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
       const res = await generateTibetanResponse(prompt, []);
       
       if (isEnglish) {
+        // Try to extract a likely Tibetan term from the AI response if it follows a pattern
+        // For simplicity, we just put the whole response in the definition for now
         setNewEntry({ englishTerm: searchTerm, definition: res });
       } else {
         setNewEntry({ term: searchTerm, definition: res });
@@ -205,44 +185,29 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
       <div className="flex px-5 py-2.5 gap-1.5 bg-red-50/30 dark:bg-stone-900 mx-6 mt-4 rounded-2xl border border-red-50/50 dark:border-stone-800 shadow-inner">
         <button
           onClick={() => setActiveDict('regular')}
-          className={`flex-1 py-2.5 text-sm font-bold transition-all rounded-xl ${
+          className={`flex-1 py-2.5 text-xs font-bold transition-all rounded-xl ${
             activeDict === 'regular' ? 'bg-white dark:bg-stone-800 shadow-md text-red-900 dark:text-red-400' : 'text-slate-400 dark:text-stone-600 hover:text-slate-600 dark:hover:text-stone-400'
           }`}
         >
-          {TIBETAN_STRINGS.dictionary}
+          བོད་ཡིག་ཚིག་མཛོད།
         </button>
         <button
           onClick={() => setActiveDict('terminology')}
-          className={`flex-1 py-2.5 text-sm font-bold transition-all rounded-xl ${
-            activeDict === 'terminology' ? 'bg-white dark:bg-stone-800 shadow-md text-red-900 dark:text-red-400' : 'text-slate-400 dark:text-stone-600 hover:text-slate-600 dark:hover:text-stone-400'
+          className={`flex-1 py-2.5 text-xs font-bold transition-all rounded-xl ${
+            activeDict === 'terminology' ? 'bg-white dark:bg-stone-800 shadow-md text-amber-600 dark:text-amber-500' : 'text-slate-400 dark:text-stone-600 hover:text-slate-600 dark:hover:text-stone-400'
           }`}
         >
-          {TIBETAN_STRINGS.terminologyDict}
+          དབྱིན་བོད་ཚིག་མཛོད།
         </button>
       </div>
 
       <div className="p-7 flex flex-col flex-1 overflow-hidden">
-        <div className="flex items-center gap-2 mb-3 px-1">
-          <button 
-            onClick={() => {setSearchMode('tibetan'); setWylieSearchBuffer('');}}
-            className={`text-[10px] px-3 py-1.5 rounded-lg font-bold transition-all uppercase tracking-wider ${searchMode === 'tibetan' ? 'bg-red-900 dark:bg-red-700 text-white shadow-md' : 'bg-red-50 dark:bg-stone-900 text-red-800 dark:text-stone-400 hover:bg-red-100'}`}
-          >
-            {TIBETAN_STRINGS.kbTibetan}
-          </button>
-          <button 
-            onClick={() => setSearchMode('ewts')}
-            className={`text-[10px] px-3 py-1.5 rounded-lg font-bold transition-all uppercase tracking-wider ${searchMode === 'ewts' ? 'bg-red-900 dark:bg-red-700 text-white shadow-md' : 'bg-red-50 dark:bg-stone-900 text-red-800 dark:text-stone-400 hover:bg-red-100'}`}
-          >
-            Wylie
-          </button>
-        </div>
-
-        <div className="relative mb-7">
+        <div className="relative mb-7 mt-4">
           <input
             type="text"
             value={searchTerm}
             onChange={handleSearchChange}
-            placeholder={searchMode === 'ewts' ? TIBETAN_STRINGS.wyliePlaceholder : TIBETAN_STRINGS.searchPlaceholder}
+            placeholder={activeDict === 'regular' ? TIBETAN_STRINGS.searchPlaceholder : "དབྱིན་ཡིག་གི་ཚིག་འཚོལ་བ། (Search English...)"}
             className="w-full pl-14 pr-6 py-4.5 bg-red-50/50 dark:bg-stone-900 focus:bg-white dark:focus:bg-stone-800 border-2 border-transparent focus:border-red-900 dark:focus:border-red-700 rounded-[1.8rem] outline-none transition-all text-xl font-medium shadow-inner dark:text-stone-100 Tibetan-text"
           />
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 absolute left-5 top-4.5 text-slate-300 dark:text-stone-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -259,7 +224,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
                   <input
                     value={newEntry.englishTerm || ''}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, englishTerm: e.target.value }))}
-                    placeholder="English Term"
+                    placeholder="English Word"
                     className="w-full p-3 bg-red-50 dark:bg-stone-900 border border-red-50 dark:border-stone-700 rounded-2xl outline-none text-lg font-bold focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all dark:text-stone-100"
                   />
                 </div>
@@ -270,7 +235,7 @@ const DictionaryPanel: React.FC<DictionaryPanelProps> = ({ isOpen, onClose, init
                   <input
                     value={newEntry.term || ''}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, term: e.target.value }))}
-                    placeholder="མིང་།"
+                    placeholder="བོད་ཡིག་གི་མིང་།"
                     className={`w-full p-3 bg-red-50 dark:bg-stone-900 border ${!newEntrySpellCheck.isValid ? 'border-red-500' : 'border-red-50 dark:border-stone-700'} rounded-2xl outline-none text-2xl font-bold focus:bg-white dark:focus:bg-stone-700 focus:border-red-900 transition-all dark:text-stone-100`}
                   />
                   {!newEntrySpellCheck.isValid && (

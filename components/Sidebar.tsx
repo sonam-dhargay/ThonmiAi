@@ -16,8 +16,10 @@ interface SidebarProps {
   onResetApp: () => void;
   onLogin?: () => void;
   onSignup?: () => void;
+  onOpenKeySelection?: () => void;
   isOpen: boolean;
   isLoggedIn?: boolean;
+  hasSelectedKey?: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -32,8 +34,10 @@ const Sidebar: React.FC<SidebarProps> = ({
   onResetApp,
   onLogin,
   onSignup,
+  onOpenKeySelection,
   isOpen,
-  isLoggedIn = false
+  isLoggedIn = false,
+  hasSelectedKey = false
 }) => {
   return (
     <div
@@ -51,38 +55,38 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-5 space-y-2">
         <button
           onClick={onShowAbout}
-          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700 group"
         >
-          <div className="w-8 h-8 rounded-xl bg-red-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-colors">
+          <div className="w-8 h-8 rounded-xl bg-red-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-all group-hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <span>{TIBETAN_STRINGS.aboutProject}</span>
+          <span className="Tibetan-text text-base">{TIBETAN_STRINGS.aboutProject}</span>
         </button>
 
         <button
           onClick={onShowWhy}
-          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700 group"
         >
-          <div className="w-8 h-8 rounded-xl bg-amber-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-colors">
+          <div className="w-8 h-8 rounded-xl bg-amber-50/50 dark:bg-amber-900/20 flex items-center justify-center transition-all group-hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z" />
             </svg>
           </div>
-          <span>{TIBETAN_STRINGS.whyThonmi}</span>
+          <span className="Tibetan-text text-base">{TIBETAN_STRINGS.whyThonmi}</span>
         </button>
 
         <button
           onClick={onShowHow}
-          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700"
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-emerald-600 dark:hover:text-emerald-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700 group"
         >
-          <div className="w-8 h-8 rounded-xl bg-indigo-50/50 dark:bg-stone-800/50 flex items-center justify-center transition-colors">
+          <div className="w-8 h-8 rounded-xl bg-emerald-50/50 dark:bg-emerald-900/20 flex items-center justify-center transition-all group-hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
           </div>
-          <span>{TIBETAN_STRINGS.howItWorks}</span>
+          <span className="Tibetan-text text-base">{TIBETAN_STRINGS.howItWorks}</span>
         </button>
 
         <button
@@ -90,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           className="w-full flex items-center justify-center gap-3 py-4 px-5 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 transition-all rounded-[1.5rem] text-white text-lg font-bold shadow-2xl shadow-amber-100 dark:shadow-black/50 active:scale-[0.96] group mt-2"
         >
           <span className="text-2xl leading-none group-hover:rotate-90 transition-transform duration-500">+</span>
-          <span>{TIBETAN_STRINGS.newChat}</span>
+          <span className="Tibetan-text">{TIBETAN_STRINGS.newChat}</span>
         </button>
       </div>
 
@@ -141,35 +145,39 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="p-6 bg-red-50/30 dark:bg-stone-900/50 backdrop-blur-md border-t border-red-50/50 dark:border-stone-800 flex flex-col gap-3">
-        {/* Account Section */}
-        {!isLoggedIn && (
-          <div className="bg-white/60 dark:bg-stone-800/60 p-4 rounded-3xl border border-red-50 dark:border-stone-700 shadow-sm mb-1">
-            <h3 className="text-[10px] font-black text-slate-400 dark:text-stone-500 uppercase tracking-widest mb-3 px-1 flex items-center justify-between">
-              {TIBETAN_STRINGS.account}
-              <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></div>
-            </h3>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={onLogin}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-white dark:bg-stone-700 border border-red-100 dark:border-stone-600 rounded-2xl text-slate-700 dark:text-stone-200 text-sm font-bold hover:shadow-md hover:border-amber-200 dark:hover:border-amber-800 transition-all active:scale-[0.97]"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                </svg>
-                {TIBETAN_STRINGS.login}
-              </button>
-              <button
-                onClick={onSignup}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-br from-amber-500 to-amber-600 dark:from-amber-600 dark:to-amber-700 text-white rounded-2xl text-sm font-bold shadow-lg shadow-amber-100 dark:shadow-black/20 hover:shadow-xl transition-all active:scale-[0.97]"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                </svg>
-                {TIBETAN_STRINGS.signup}
-              </button>
-            </div>
+        {/* API Key Section */}
+        <div className="bg-amber-50/50 dark:bg-amber-900/20 p-4 rounded-3xl border border-amber-100/50 dark:border-amber-900/40 shadow-sm mb-1">
+          <h3 className="text-[10px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-3 px-1 flex items-center justify-between">
+            {TIBETAN_STRINGS.keySelectionTitle}
+            <div className={`w-1.5 h-1.5 rounded-full ${hasSelectedKey ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`}></div>
+          </h3>
+          <p className="text-[10px] text-slate-500 dark:text-stone-400 mb-3 px-1 Tibetan-text leading-tight">
+            {TIBETAN_STRINGS.keySelectionDesc}
+          </p>
+          <div className="flex flex-col gap-2">
+            <button
+              onClick={onOpenKeySelection}
+              className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-sm font-bold transition-all active:scale-[0.97] ${
+                hasSelectedKey 
+                ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900/50' 
+                : 'bg-amber-500 dark:bg-amber-600 text-white shadow-lg shadow-amber-100 dark:shadow-black/20 hover:bg-amber-600'
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+              </svg>
+              {hasSelectedKey ? TIBETAN_STRINGS.keySelected : TIBETAN_STRINGS.selectKey}
+            </button>
+            <a 
+              href={TIBETAN_STRINGS.billingDocUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[10px] text-center text-slate-400 dark:text-stone-500 hover:text-amber-600 dark:hover:text-amber-400 font-bold underline transition-colors"
+            >
+              {TIBETAN_STRINGS.billingDoc}
+            </a>
           </div>
-        )}
+        </div>
 
         <button
           onClick={onResetApp}

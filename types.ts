@@ -17,6 +17,8 @@ export interface ChatSession {
 
 export type KeyboardMode = 'ewts' | 'tibetan';
 
+export type Tone = 'neutral' | 'formal' | 'informal' | 'humorous';
+
 export interface DictionaryEntry {
   term: string; // Used as the primary Tibetan term
   englishTerm?: string; // New field for bilingual terminology
