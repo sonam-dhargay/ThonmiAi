@@ -501,8 +501,8 @@ const App: React.FC = () => {
         return !activeSession || activeSession.messages.length === 0 ? (
           <div className="h-full flex flex-col items-center pt-2 md:pt-6 pb-8 px-6 text-center max-w-5xl mx-auto overflow-y-visible relative animate-fade-in">
             <div className="relative mb-2 md:mb-4 animate-float shrink-0 z-10">
-              <div className="absolute inset-0 bg-red-500 blur-[80px] opacity-10 rounded-full"></div>
-              <Logo className="w-14 h-14 md:w-16 md:h-16 drop-shadow-xl relative z-10 transition-all duration-500" />
+              <div className="absolute inset-0 bg-red-800 blur-[40px] opacity-5 rounded-full"></div>
+              <Logo className="w-16 h-16 md:w-20 md:h-20 drop-shadow-md relative z-10 transition-all duration-500" />
             </div>
             <h3 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-stone-100 mb-1 md:mb-2 tracking-tight leading-tight z-10 transition-all Tibetan-text animate-slide-down">
               {user ? `${user.name}ལགས། ${TIBETAN_STRINGS.welcomeTitle}` : TIBETAN_STRINGS.welcomeTitle}
