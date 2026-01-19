@@ -34,10 +34,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onResetApp,
   onLogin,
   onSignup,
-  onOpenKeySelection,
   isOpen,
   isLoggedIn = false,
-  hasSelectedKey = false
 }) => {
   return (
     <div
@@ -145,39 +143,33 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="p-6 bg-red-50/30 dark:bg-stone-900/50 backdrop-blur-md border-t border-red-50/50 dark:border-stone-800 flex flex-col gap-3">
-        {/* API Key Section */}
-        <div className="bg-amber-50/50 dark:bg-amber-900/20 p-4 rounded-3xl border border-amber-100/50 dark:border-amber-900/40 shadow-sm mb-1">
-          <h3 className="text-[10px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-3 px-1 flex items-center justify-between">
-            {TIBETAN_STRINGS.keySelectionTitle}
-            <div className={`w-1.5 h-1.5 rounded-full ${hasSelectedKey ? 'bg-green-500' : 'bg-red-500 animate-pulse'}`}></div>
-          </h3>
-          <p className="text-[10px] text-slate-500 dark:text-stone-400 mb-3 px-1 Tibetan-text leading-tight">
-            {TIBETAN_STRINGS.keySelectionDesc}
-          </p>
-          <div className="flex flex-col gap-2">
+        {/* Auth Section */}
+        {!isLoggedIn ? (
+          <div className="flex gap-2 mb-1">
             <button
-              onClick={onOpenKeySelection}
-              className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl text-sm font-bold transition-all active:scale-[0.97] ${
-                hasSelectedKey 
-                ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-900/50' 
-                : 'bg-amber-500 dark:bg-amber-600 text-white shadow-lg shadow-amber-100 dark:shadow-black/20 hover:bg-amber-600'
-              }`}
+              onClick={onLogin}
+              className="flex-1 py-3 px-4 bg-white dark:bg-stone-800 border border-red-100 dark:border-stone-700 rounded-2xl text-xs font-bold text-slate-700 dark:text-stone-200 hover:bg-red-50 dark:hover:bg-stone-700 transition-all shadow-sm active:scale-95 Tibetan-text"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-              </svg>
-              {hasSelectedKey ? TIBETAN_STRINGS.keySelected : TIBETAN_STRINGS.selectKey}
+              {TIBETAN_STRINGS.login}
             </button>
-            <a 
-              href={TIBETAN_STRINGS.billingDocUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-[10px] text-center text-slate-400 dark:text-stone-500 hover:text-amber-600 dark:hover:text-amber-400 font-bold underline transition-colors"
+            <button
+              onClick={onSignup}
+              className="flex-1 py-3 px-4 bg-red-900 dark:bg-red-700 text-white rounded-2xl text-xs font-bold hover:bg-red-800 dark:hover:bg-red-600 transition-all shadow-md active:scale-95 Tibetan-text"
             >
-              {TIBETAN_STRINGS.billingDoc}
-            </a>
+              {TIBETAN_STRINGS.signup}
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="bg-red-900/5 dark:bg-stone-800/50 p-4 rounded-3xl border border-red-100/50 dark:border-stone-700 shadow-sm mb-1 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-900 to-amber-600 flex items-center justify-center text-white font-bold text-lg shadow-inner">
+               👤
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-red-900/50 dark:text-stone-500 uppercase tracking-widest">{TIBETAN_STRINGS.account}</span>
+              <span className="text-sm font-bold Tibetan-text text-slate-800 dark:text-stone-100">User Profile</span>
+            </div>
+          </div>
+        )}
 
         <button
           onClick={onResetApp}
