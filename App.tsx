@@ -45,7 +45,7 @@ const App: React.FC = () => {
   const [hasSelectedKey, setHasSelectedKey] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [dictionaryInitialTerm, setDictionaryInitialTerm] = useState<string | undefined>(undefined);
-  const [spellResult, setSpellResult] = useState<SpellResult>({ isValid: true, errors: [], invalidSyllables: [] });
+  const [spellResult, setSpellResult] = useState<SpellResult>({ isValid: true, errors: [], invalidSyllables: [], suggestions: {} });
   const [examplePrompts, setExamplePrompts] = useState<string[]>(TIBETAN_STRINGS.examplePrompts);
   const [isRefreshingPrompts, setIsRefreshingPrompts] = useState(false);
   
@@ -299,6 +299,14 @@ const App: React.FC = () => {
       setInputValue(convertedVal);
       setWylieBuffer('');
     }
+  };
+
+  const applySpellSuggestion = (original: string, suggestion: string) => {
+    const escaped = original.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'g');
+    const newValue = inputValue.replace(regex, suggestion);
+    setInputValue(newValue);
+    textareaRef.current?.focus();
   };
 
   const handleKeyPress = (key: string) => {
@@ -660,19 +668,37 @@ const App: React.FC = () => {
           <div className="p-4 md:p-6 bg-transparent sticky bottom-0 z-20 pointer-events-none">
             <div className="max-w-4xl mx-auto space-y-3 pointer-events-auto flex flex-col">
               {!spellResult.isValid && (
-                <div className="animate-slide-up bg-red-50/90 dark:bg-stone-900/90 backdrop-blur-md border border-red-100 dark:border-red-900/30 p-4 rounded-[1.8rem] shadow-xl shadow-red-100/50 dark:shadow-black/50 mb-2">
-                  <div className="flex items-center gap-3 mb-2 text-red-600 dark:text-red-400 font-bold text-xs uppercase tracking-widest">
+                <div className="animate-slide-up bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-2 border-red-200 dark:border-red-900/30 p-5 rounded-[2rem] shadow-2xl shadow-red-200/50 dark:shadow-black/70 mb-2">
+                  <div className="flex items-center gap-3 mb-4 text-red-600 dark:text-red-400 font-bold text-xs uppercase tracking-widest">
                     <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
                     {TIBETAN_STRINGS.spellCheckFail}
                   </div>
-                  <ul className="space-y-1">
-                    {spellResult.errors.map((err, i) => (
-                      <li key={i} className="text-red-700 dark:text-red-300 text-base font-medium Tibetan-text pl-5 relative">
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-red-300 dark:bg-red-700 rounded-full"></span>
-                        {err}
-                      </li>
+                  
+                  <div className="space-y-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                    {spellResult.invalidSyllables.map((syl, i) => (
+                      <div key={i} className="flex flex-col gap-2 p-3 bg-red-50/50 dark:bg-stone-800/50 rounded-2xl border border-red-100/50 dark:border-red-900/20">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xl font-bold text-red-700 dark:text-red-400 Tibetan-text">{syl}</span>
+                          <span className="text-[10px] bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 px-2 py-1 rounded-lg font-bold uppercase">Invalid</span>
+                        </div>
+                        
+                        {spellResult.suggestions[syl] && spellResult.suggestions[syl].length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            <span className="text-[10px] text-slate-400 font-bold uppercase w-full mb-1">Suggested Fixes:</span>
+                            {spellResult.suggestions[syl].map((suggestion, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => applySpellSuggestion(syl, suggestion)}
+                                className="px-3 py-1.5 bg-white dark:bg-stone-700 border border-red-100 dark:border-stone-600 rounded-xl text-sm font-bold text-slate-700 dark:text-stone-200 hover:bg-red-900 hover:text-white dark:hover:bg-red-700 transition-all active:scale-95 Tibetan-text"
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               )}
 
@@ -734,7 +760,7 @@ const App: React.FC = () => {
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
                     placeholder={isImageMode ? TIBETAN_STRINGS.imageGenPlaceholder : (keyboardMode === 'ewts' ? TIBETAN_STRINGS.wyliePlaceholder : TIBETAN_STRINGS.inputPlaceholder)}
                     rows={1}
-                    className={`w-full bg-white dark:bg-stone-800 border ${isImageMode ? 'border-amber-200 dark:border-amber-700' : (!spellResult.isValid ? 'border-red-200 dark:border-red-900/50' : 'border-red-100 dark:border-stone-700')} focus:border-red-900 dark:focus:border-red-600 focus:ring-4 md:focus:ring-8 rounded-[2rem] md:rounded-[2.5rem] py-4 md:py-6 pl-6 md:pl-8 pr-24 md:pr-32 text-xl md:text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl Tibetan-text`}
+                    className={`w-full bg-white dark:bg-stone-800 border-2 ${isImageMode ? 'border-amber-200 dark:border-amber-700' : (!spellResult.isValid ? 'border-red-400 dark:border-red-800 shadow-red-50 dark:shadow-red-900/10' : 'border-red-50 dark:border-stone-700')} focus:border-red-900 dark:focus:border-red-600 focus:ring-4 md:focus:ring-8 rounded-[2rem] md:rounded-[2.5rem] py-4 md:py-6 pl-6 md:pl-8 pr-24 md:pr-32 text-xl md:text-2xl dark:text-stone-100 outline-none transition-all resize-none shadow-2xl Tibetan-text`}
                     style={{ minHeight: '64px', maxHeight: '200px' }}
                   />
                   {inputValue && (
