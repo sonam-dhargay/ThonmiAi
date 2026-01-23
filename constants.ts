@@ -1,3 +1,4 @@
+
 import { DictionaryEntry } from './types';
 
 export const SYSTEM_PROMPT = `
@@ -45,6 +46,11 @@ export const TIBETAN_STRINGS = {
   resetConfirm: "ཁྱེད་ཀྱིས་གནས་ཚུལ་ཡོད་ཚད་གསུབ་འདོད་པ་ངེས་གཏན་ཡིན་ནམ། བྱ་འདི་སླར་གསོ་བྱེད་མི་ཐུབ།",
   aiCaveat: "མིས་བཟོས་རིག་ནུས་ཀྱིས་ནོར་འཁྲུལ་བཟོ་སྲིད་པས་དེ་དོན་དགོངས་འཇགས་ཞུ།",
   
+  // Controls
+  edit: "རྩོམ་སྒྲིག",
+  save: "ཉར་ཚགས།",
+  cancel: "ཕྱིར་འཐེན།",
+
   // Tone
   toneLabel: "སྐད་གདངས།",
   tones: {

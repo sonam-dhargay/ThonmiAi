@@ -143,46 +143,62 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="p-6 bg-red-50/30 dark:bg-stone-900/50 backdrop-blur-md border-t border-red-50/50 dark:border-stone-800 flex flex-col gap-3">
-        {/* Auth Section */}
+        {/* Auth Section - Re-Redesigned for Maximum Visual Appeal */}
         {!isLoggedIn ? (
-          <div className="flex gap-2 mb-1">
-            <button
-              onClick={onLogin}
-              className="flex-1 py-3 px-4 bg-white dark:bg-stone-800 border border-red-100 dark:border-stone-700 rounded-2xl text-xs font-bold text-slate-700 dark:text-stone-200 hover:bg-red-50 dark:hover:bg-stone-700 transition-all shadow-sm active:scale-95 Tibetan-text"
-            >
-              {TIBETAN_STRINGS.login}
-            </button>
+          <div className="flex flex-col gap-3 mb-2">
             <button
               onClick={onSignup}
-              className="flex-1 py-3 px-4 bg-red-900 dark:bg-red-700 text-white rounded-2xl text-xs font-bold hover:bg-red-800 dark:hover:bg-red-600 transition-all shadow-md active:scale-95 Tibetan-text"
+              className="group relative w-full overflow-hidden py-4 px-6 rounded-[1.8rem] font-bold transition-all duration-500 active:scale-95 shadow-[0_10px_30px_-10px_rgba(128,0,0,0.5)] dark:shadow-black"
             >
-              {TIBETAN_STRINGS.signup}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-950 via-red-800 to-amber-600 transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"></div>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-[radial-gradient(circle_at_center,_white_0%,_transparent_70%)] transition-opacity duration-500"></div>
+              <div className="relative flex items-center justify-center gap-3.5 text-white">
+                <div className="p-1.5 bg-white/20 rounded-xl backdrop-blur-sm group-hover:bg-white/30 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                  </svg>
+                </div>
+                <span className="Tibetan-text text-lg tracking-wide group-hover:tracking-wider transition-all duration-500">{TIBETAN_STRINGS.signup}</span>
+              </div>
+            </button>
+
+            <button
+              onClick={onLogin}
+              className="group relative w-full overflow-hidden py-4 px-6 rounded-[1.8rem] font-bold transition-all duration-500 active:scale-95 bg-white/40 dark:bg-stone-800/40 backdrop-blur-xl border-2 border-red-100/50 dark:border-stone-700/50 shadow-sm"
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-gradient-to-r from-red-50 to-amber-50 dark:from-red-950/20 dark:to-stone-800/20 transition-opacity duration-500"></div>
+              <div className="relative flex items-center justify-center gap-3.5 text-red-900 dark:text-red-400 group-hover:text-red-950 dark:group-hover:text-red-300">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 opacity-70 group-hover:rotate-12 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                </svg>
+                <span className="Tibetan-text text-lg transition-all duration-500">{TIBETAN_STRINGS.login}</span>
+              </div>
             </button>
           </div>
         ) : (
-          <div className="bg-red-900/5 dark:bg-stone-800/50 p-4 rounded-3xl border border-red-100/50 dark:border-stone-700 shadow-sm mb-1 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-900 to-amber-600 flex items-center justify-center text-white font-bold text-lg shadow-inner">
+          <div className="bg-white/50 dark:bg-stone-800/50 p-4 rounded-[2rem] border border-red-50/50 dark:border-stone-700 shadow-sm mb-1 flex items-center gap-4 hover:shadow-md transition-all cursor-pointer group">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-900 to-amber-600 flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform duration-500">
                👤
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-red-900/50 dark:text-stone-500 uppercase tracking-widest">{TIBETAN_STRINGS.account}</span>
-              <span className="text-sm font-bold Tibetan-text text-slate-800 dark:text-stone-100">User Profile</span>
+              <span className="text-[10px] font-black text-red-900/50 dark:text-stone-500 uppercase tracking-widest leading-none mb-1.5">{TIBETAN_STRINGS.account}</span>
+              <span className="text-base font-bold Tibetan-text text-slate-800 dark:text-stone-100 leading-none">User Profile</span>
             </div>
           </div>
         )}
 
         <button
           onClick={onResetApp}
-          className="w-full flex items-center justify-start gap-4 py-3 px-5 text-slate-400 dark:text-stone-500 hover:text-red-700 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-800 transition-all rounded-2xl text-xs font-bold uppercase tracking-widest border border-transparent hover:border-red-100 dark:hover:border-stone-700"
+          className="w-full flex items-center justify-start gap-4 py-3.5 px-6 text-slate-400 dark:text-stone-600 hover:text-red-700 dark:hover:text-red-500 hover:bg-red-50/50 dark:hover:bg-stone-800/50 transition-all rounded-2xl text-[10px] font-black uppercase tracking-[0.25em] border border-transparent hover:border-red-100/50 dark:hover:border-stone-700/50"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
           {TIBETAN_STRINGS.resetApp}
         </button>
         <div className="px-5">
-           <div className="h-px bg-red-100/50 dark:bg-stone-800 w-full mb-3"></div>
-           <div className="text-slate-400 dark:text-stone-600 text-[10px] text-center font-bold tracking-[0.2em] uppercase opacity-70">
+           <div className="h-px bg-red-100/30 dark:bg-stone-800/30 w-full mb-4"></div>
+           <div className="text-slate-400 dark:text-stone-700 text-[10px] text-center font-black tracking-[0.3em] uppercase opacity-50">
             {TIBETAN_STRINGS.versionInfo}
           </div>
         </div>

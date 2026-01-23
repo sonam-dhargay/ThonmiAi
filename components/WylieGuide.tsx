@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { TIBETAN_STRINGS } from '../constants';
 
 interface WylieGuideProps {
@@ -8,9 +8,9 @@ interface WylieGuideProps {
 }
 
 const WylieGuide: React.FC<WylieGuideProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const sections = [
+  const sections = useMemo(() => [
     {
       title: TIBETAN_STRINGS.wylieConsonants,
       items: [
@@ -45,7 +45,36 @@ const WylieGuide: React.FC<WylieGuideProps> = ({ isOpen, onClose }) => {
         { w: 'snyan', t: 'སྙན' }
       ]
     }
-  ];
+  ], []);
+
+  const filteredSections = useMemo(() => {
+    if (!searchTerm.trim()) return sections;
+    const lowerSearch = searchTerm.toLowerCase();
+    
+    return sections.map(section => ({
+      ...section,
+      items: section.items.filter(item => 
+        item.w.toLowerCase().includes(lowerSearch) || 
+        item.t.includes(searchTerm)
+      )
+    })).filter(section => section.items.length > 0);
+  }, [searchTerm, sections]);
+
+  const highlightText = (text: string, highlight: string) => {
+    if (!highlight.trim()) return text;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+      <>
+        {parts.map((part, i) => (
+          part.toLowerCase() === highlight.toLowerCase() ? (
+            <span key={i} className="bg-amber-200 dark:bg-amber-600/50 rounded-sm">{part}</span>
+          ) : part
+        ))}
+      </>
+    );
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 dark:bg-black/70 backdrop-blur-md animate-fade-in transition-colors duration-300">
@@ -54,7 +83,8 @@ const WylieGuide: React.FC<WylieGuideProps> = ({ isOpen, onClose }) => {
           <h3 className="text-2xl font-bold text-slate-800 dark:text-stone-100 flex items-center gap-4">
             <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
               </svg>
             </div>
             {TIBETAN_STRINGS.wylieGuide}
@@ -66,36 +96,75 @@ const WylieGuide: React.FC<WylieGuideProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
-          {/* Introduction Section */}
-          <div className="bg-indigo-50/50 dark:bg-indigo-900/20 p-6 rounded-[2rem] border border-indigo-100 dark:border-indigo-900/30">
-            <h4 className="text-lg font-bold text-indigo-900 dark:text-indigo-300 mb-3 Tibetan-text">
-              {TIBETAN_STRINGS.wylieIntroTitle}
-            </h4>
-            <p className="text-base text-slate-700 dark:text-stone-300 Tibetan-text leading-relaxed mb-4">
-              {TIBETAN_STRINGS.wylieIntroContent}
-            </p>
-            <p className="text-base text-slate-700 dark:text-stone-300 Tibetan-text leading-relaxed italic border-l-4 border-indigo-200 dark:border-indigo-800 pl-4">
-              {TIBETAN_STRINGS.wyliePurpose}
-            </p>
+        <div className="px-8 pt-6 pb-2">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="ཝ་ལིའམ་བོད་ཡིག་འཚོལ་བ། (Search Wylie or Tibetan...)"
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-stone-800 border border-slate-200 dark:border-stone-700 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-600 transition-all text-base dark:text-stone-100"
+            />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
+        </div>
 
-          {sections.map((section, idx) => (
-            <div key={idx}>
-              <h4 className="text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-[0.25em] mb-6 flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                {section.title}
+        <div className="flex-1 overflow-y-auto p-8 pt-4 space-y-10 custom-scrollbar">
+          {/* Introduction Section - Only show when not searching */}
+          {!searchTerm && (
+            <div className="bg-indigo-50/50 dark:bg-indigo-900/20 p-6 rounded-[2rem] border border-indigo-100 dark:border-indigo-900/30">
+              <h4 className="text-lg font-bold text-indigo-900 dark:text-indigo-300 mb-3 Tibetan-text">
+                {TIBETAN_STRINGS.wylieIntroTitle}
               </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-                {section.items.map((item, i) => (
-                  <div key={i} className="flex flex-col items-center p-4 bg-slate-50 dark:bg-stone-800 border border-slate-100 dark:border-stone-700 rounded-[1.5rem] hover:border-indigo-200 dark:hover:border-indigo-800 hover:shadow-lg transition-all group">
-                    <span className="text-sm font-mono text-indigo-500 dark:text-indigo-400 font-bold mb-2 group-hover:scale-110 transition-transform">{item.w}</span>
-                    <span className="text-3xl text-slate-800 dark:text-stone-100 Tibetan-text">{item.t}</span>
-                  </div>
-                ))}
-              </div>
+              <p className="text-base text-slate-700 dark:text-stone-300 Tibetan-text leading-relaxed mb-4">
+                {TIBETAN_STRINGS.wylieIntroContent}
+              </p>
+              <p className="text-base text-slate-700 dark:text-stone-300 Tibetan-text leading-relaxed italic border-l-4 border-indigo-200 dark:border-indigo-800 pl-4">
+                {TIBETAN_STRINGS.wyliePurpose}
+              </p>
             </div>
-          ))}
+          )}
+
+          {filteredSections.length > 0 ? (
+            filteredSections.map((section, idx) => (
+              <div key={idx} className="animate-fade-in">
+                <h4 className="text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-[0.25em] mb-6 flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                  {section.title}
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
+                  {section.items.map((item, i) => (
+                    <div key={i} className="flex flex-col items-center p-4 bg-slate-50 dark:bg-stone-800 border border-slate-100 dark:border-stone-700 rounded-[1.5rem] hover:border-indigo-200 dark:hover:border-indigo-800 hover:shadow-lg transition-all group">
+                      <span className="text-sm font-mono text-indigo-500 dark:text-indigo-400 font-bold mb-2 group-hover:scale-110 transition-transform">
+                        {highlightText(item.w, searchTerm)}
+                      </span>
+                      <span className="text-3xl text-slate-800 dark:text-stone-100 Tibetan-text">
+                        {highlightText(item.t, searchTerm)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-20 bg-slate-50/50 dark:bg-stone-800/50 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-stone-700">
+               <p className="text-slate-400 dark:text-stone-500 font-bold tracking-wide">
+                 "{searchTerm}" རྙེད་མ་སོང་། (No matches found)
+               </p>
+            </div>
+          )}
         </div>
         
         <div className="p-6 bg-slate-50 dark:bg-stone-950 border-t border-slate-100 dark:border-stone-800 text-center text-slate-400 dark:text-stone-600 text-xs font-bold tracking-widest uppercase">

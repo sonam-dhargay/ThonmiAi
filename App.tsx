@@ -518,7 +518,7 @@ const App: React.FC = () => {
             <p className="text-slate-500 dark:text-stone-400 max-w-2xl mb-4 md:mb-8 text-base md:text-lg leading-relaxed font-medium Tibetan-text z-10 transition-all">
               {TIBETAN_STRINGS.welcomeSubtitle}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full relative mb-6 md:mb-12 z-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full relative mb-4 md:mb-6 z-10">
               {examplePrompts.map((prompt, idx) => (
                 <button
                   key={idx}
@@ -537,6 +537,10 @@ const App: React.FC = () => {
                 </svg>
               </button>
             </div>
+            
+            <p className="text-slate-400 dark:text-stone-500 text-sm md:text-base font-bold italic Tibetan-text z-10 animate-fade-in mb-12">
+              {TIBETAN_STRINGS.examplePromptsNote}
+            </p>
           </div>
         ) : (
           <div className="max-w-4xl mx-auto w-full p-6 md:p-10 pb-48">
