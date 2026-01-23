@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { TIBETAN_STRINGS } from '../constants';
 import Logo from './Logo';
 
-const STORAGE_KEY = 'bod_skyad_about_v2';
+const STORAGE_KEY = 'bod_skyad_about_v3';
 
 const AboutPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSavedFeedback, setIsSavedFeedback] = useState(false);
   
-  // Lazy initializer ensures we load from localStorage immediately on mount
+  // Load initial state from localStorage or use defaults
   const [content, setContent] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -29,11 +29,15 @@ const AboutPage: React.FC = () => {
     };
   });
 
-  const handleSave = () => {
+  // Auto-save effect: Whenever content changes, persist to localStorage
+  useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
+  }, [content]);
+
+  const handleFinishEditing = () => {
     setIsEditing(false);
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
+    setIsSavedFeedback(true);
+    setTimeout(() => setIsSavedFeedback(false), 2000);
   };
 
   return (
@@ -44,12 +48,12 @@ const AboutPage: React.FC = () => {
             <button 
               onClick={() => setIsEditing(true)}
               className={`px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-widest transition-all flex items-center gap-2 shadow-sm ${
-                isSaved 
+                isSavedFeedback 
                 ? 'bg-emerald-500 text-white' 
                 : 'bg-red-50 dark:bg-stone-700 text-red-900 dark:text-red-400 hover:bg-red-100'
               }`}
             >
-              {isSaved ? (
+              {isSavedFeedback ? (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -66,20 +70,15 @@ const AboutPage: React.FC = () => {
               )}
             </button>
           ) : (
-            <div className="flex gap-2">
-              <button 
-                onClick={handleSave}
-                className="px-4 py-2 bg-red-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-800 transition-all shadow-md"
-              >
-                {TIBETAN_STRINGS.save}
-              </button>
-              <button 
-                onClick={() => setIsEditing(false)}
-                className="px-4 py-2 bg-slate-100 dark:bg-stone-700 text-slate-600 dark:text-stone-400 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
-              >
-                {TIBETAN_STRINGS.cancel}
-              </button>
-            </div>
+            <button 
+              onClick={handleFinishEditing}
+              className="px-6 py-2 bg-red-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-red-800 transition-all shadow-md flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {TIBETAN_STRINGS.save}
+            </button>
           )}
         </div>
 

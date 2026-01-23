@@ -9,6 +9,7 @@ import GrammarGuide from './components/GrammarGuide';
 import AboutPage from './components/AboutPage';
 import WhyPage from './components/WhyPage';
 import HowPage from './components/HowPage';
+import SupportPage from './components/SupportPage';
 import PredictiveBar from './components/PredictiveBar';
 import Logo from './components/Logo';
 import ToneSelector from './components/ToneSelector';
@@ -18,7 +19,7 @@ import { generateStreamTibetanResponse, getDynamicExamplePrompts, isImageRequest
 import { ewtsToUnicode } from './utils/wylie';
 import { checkTibetanSpelling, SpellResult } from './utils/spellChecker';
 
-type ViewMode = 'chat' | 'about' | 'why' | 'how';
+type ViewMode = 'chat' | 'about' | 'why' | 'how' | 'support';
 type ThemeMode = 'light' | 'dark';
 
 interface User {
@@ -273,6 +274,12 @@ const App: React.FC = () => {
     setIsSidebarOpen(false);
   };
 
+  const handleShowSupport = () => {
+    setViewMode('support');
+    setActiveSessionId(null);
+    setIsSidebarOpen(false);
+  };
+
   const handleSelectSession = (id: string) => {
     setActiveSessionId(id);
     setViewMode('chat');
@@ -478,7 +485,7 @@ const App: React.FC = () => {
   };
 
   const handleMockLogin = () => {
-    const name = window.prompt("ཁྱེད་ཀྱི་མཚན་ལ་ཅི་ཟེར། (Enter your name):", "བཀྲ་ཤིས");
+    const name = window.prompt("ཁྱེད་ཀྱི་ mཚན་ལ་ཅི་ཟེར། (Enter your name):", "བཀྲ་ཤིས");
     if (name) {
       setUser({ name });
       setIsSidebarOpen(false);
@@ -490,7 +497,7 @@ const App: React.FC = () => {
   };
 
   const handleMockSignup = () => {
-    const name = window.prompt("ཁྱེད་ཀྱི་མཚན་ལ་ཅི་ཟེར། (Enter your name):", "");
+    const name = window.prompt("ཁྱེད་ཀྱི་ mཚན་ལ་ཅི་ཟེར། (Enter your name):", "");
     if (name) {
       setUser({ name });
       setIsSidebarOpen(false);
@@ -505,6 +512,7 @@ const App: React.FC = () => {
       case 'about': return <AboutPage />;
       case 'why': return <WhyPage />;
       case 'how': return <HowPage />;
+      case 'support': return <SupportPage />;
       default:
         return !activeSession || activeSession.messages.length === 0 ? (
           <div className="h-full flex flex-col items-center pt-2 md:pt-6 pb-8 px-6 text-center max-w-5xl mx-auto overflow-y-visible relative animate-fade-in">
@@ -576,6 +584,7 @@ const App: React.FC = () => {
         onShowAbout={handleShowAbout}
         onShowWhy={handleShowWhy}
         onShowHow={handleShowHow}
+        onShowSupport={handleShowSupport}
         onResetApp={handleResetApp}
         onLogin={handleMockLogin}
         onSignup={handleMockSignup}

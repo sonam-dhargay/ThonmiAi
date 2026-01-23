@@ -13,6 +13,7 @@ interface SidebarProps {
   onShowAbout: () => void;
   onShowWhy: () => void;
   onShowHow: () => void;
+  onShowSupport: () => void;
   onResetApp: () => void;
   onLogin?: () => void;
   onSignup?: () => void;
@@ -31,6 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onShowAbout,
   onShowWhy,
   onShowHow,
+  onShowSupport,
   onResetApp,
   onLogin,
   onSignup,
@@ -50,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className="p-5 space-y-2">
+      <div className="p-5 space-y-1.5 flex flex-col flex-1 overflow-y-auto custom-scrollbar">
         <button
           onClick={onShowAbout}
           className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700 group"
@@ -88,62 +90,75 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
 
         <button
+          onClick={onShowSupport}
+          className="w-full flex items-center justify-start gap-4 py-2.5 px-4 hover:bg-white dark:hover:bg-stone-800 hover:shadow-md transition-all rounded-2xl text-slate-500 dark:text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 font-bold text-sm border border-transparent hover:border-red-50 dark:hover:border-stone-700 group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-rose-50/50 dark:bg-rose-900/20 flex items-center justify-center transition-all group-hover:scale-110">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+          <span className="Tibetan-text text-base">{TIBETAN_STRINGS.supportThonmi}</span>
+        </button>
+
+        <button
           onClick={onNewChat}
           className="w-full flex items-center justify-center gap-3 py-4 px-5 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 transition-all rounded-[1.5rem] text-white text-lg font-bold shadow-2xl shadow-amber-100 dark:shadow-black/50 active:scale-[0.96] group mt-2"
         >
           <span className="text-2xl leading-none group-hover:rotate-90 transition-transform duration-500">+</span>
           <span className="Tibetan-text">{TIBETAN_STRINGS.newChat}</span>
         </button>
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-1.5 custom-scrollbar">
-        <h2 className="px-4 text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-3">
+        <div className="h-px bg-red-100/30 dark:bg-stone-800/30 w-full my-4 shrink-0"></div>
+
+        <h2 className="px-4 text-[11px] font-bold text-slate-400 dark:text-stone-500 uppercase tracking-[0.2em] mb-3 flex items-center gap-3 shrink-0">
           <span className="w-1.5 h-1.5 bg-amber-500 rounded-full shadow-sm shadow-amber-100 dark:shadow-black"></span>
           {TIBETAN_STRINGS.sidebarTitle}
         </h2>
         
-        {sessions.length === 0 ? (
-          <div className="px-6 py-12 text-center bg-red-50/20 dark:bg-stone-800/20 rounded-3xl border border-dashed border-red-100 dark:border-stone-800 mx-2">
-            <p className="text-sm text-slate-400 dark:text-stone-500 font-bold italic Tibetan-text">{TIBETAN_STRINGS.emptyHistory}</p>
-          </div>
-        ) : (
-          sessions.map((session) => (
-            <div
-              key={session.id}
-              className={`group flex items-center gap-4 px-5 py-4 rounded-[1.5rem] cursor-pointer transition-all duration-300 mb-1 border-2 ${
-                activeSessionId === session.id
-                  ? 'bg-white dark:bg-stone-800 shadow-xl shadow-red-50/50 dark:shadow-black/50 border-red-50 dark:border-stone-700 text-red-950 dark:text-red-400'
-                  : 'hover:bg-white/60 dark:hover:bg-stone-800/60 text-slate-600 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 border-transparent hover:border-red-50 dark:hover:border-stone-800 hover:shadow-md'
-              }`}
-              onClick={() => onSelectSession(session.id)}
-            >
-              <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-all ${
-                activeSessionId === session.id 
-                  ? 'bg-red-900 dark:bg-red-400 scale-125 shadow-lg shadow-red-100 dark:shadow-red-900/50' 
-                  : 'bg-slate-200 dark:bg-stone-700 group-hover:bg-red-300 dark:group-hover:bg-red-500'
-              }`}></div>
-              <div className={`flex-1 truncate text-lg Tibetan-text ${activeSessionId === session.id ? 'font-bold' : 'font-medium'}`}>
-                {session.title}
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteSession(session.id);
-                }}
-                className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 dark:text-stone-600 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700 rounded-xl transition-all active:scale-90"
-                title={TIBETAN_STRINGS.deleteChat}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
+        <div className="space-y-1.5">
+          {sessions.length === 0 ? (
+            <div className="px-6 py-12 text-center bg-red-50/20 dark:bg-stone-800/20 rounded-3xl border border-dashed border-red-100 dark:border-stone-800 mx-2">
+              <p className="text-sm text-slate-400 dark:text-stone-500 font-bold italic Tibetan-text">{TIBETAN_STRINGS.emptyHistory}</p>
             </div>
-          ))
-        )}
+          ) : (
+            sessions.map((session) => (
+              <div
+                key={session.id}
+                className={`group flex items-center gap-4 px-5 py-4 rounded-[1.5rem] cursor-pointer transition-all duration-300 mb-1 border-2 ${
+                  activeSessionId === session.id
+                    ? 'bg-white dark:bg-stone-800 shadow-xl shadow-red-50/50 dark:shadow-black/50 border-red-50 dark:border-stone-700 text-red-950 dark:text-red-400'
+                    : 'hover:bg-white/60 dark:hover:bg-stone-800/60 text-slate-600 dark:text-stone-400 hover:text-red-900 dark:hover:text-red-400 border-transparent hover:border-red-50 dark:hover:border-stone-800 hover:shadow-md'
+                }`}
+                onClick={() => onSelectSession(session.id)}
+              >
+                <div className={`w-2.5 h-2.5 rounded-full shrink-0 transition-all ${
+                  activeSessionId === session.id 
+                    ? 'bg-red-900 dark:bg-red-400 scale-125 shadow-lg shadow-red-100 dark:shadow-red-900/50' 
+                    : 'bg-slate-200 dark:bg-stone-700 group-hover:bg-red-300 dark:group-hover:bg-red-500'
+                }`}></div>
+                <div className={`flex-1 truncate text-lg Tibetan-text ${activeSessionId === session.id ? 'font-bold' : 'font-medium'}`}>
+                  {session.title}
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteSession(session.id);
+                  }}
+                  className="opacity-0 group-hover:opacity-100 p-2 text-slate-300 dark:text-stone-600 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-stone-700 rounded-xl transition-all active:scale-90"
+                  title={TIBETAN_STRINGS.deleteChat}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
 
       <div className="p-6 bg-red-50/30 dark:bg-stone-900/50 backdrop-blur-md border-t border-red-50/50 dark:border-stone-800 flex flex-col gap-3">
-        {/* Auth Section - Re-Redesigned for Maximum Visual Appeal */}
         {!isLoggedIn ? (
           <div className="flex flex-col gap-3 mb-2">
             <button
