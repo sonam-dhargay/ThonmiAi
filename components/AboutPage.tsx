@@ -3,13 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { TIBETAN_STRINGS } from '../constants';
 import Logo from './Logo';
 
-const STORAGE_KEY = 'bod_skyad_about_v3';
+const STORAGE_KEY = 'bod_skyad_about_v4';
 
 const AboutPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSavedFeedback, setIsSavedFeedback] = useState(false);
   
-  // Load initial state from localStorage or use defaults
   const [content, setContent] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -29,7 +28,6 @@ const AboutPage: React.FC = () => {
     };
   });
 
-  // Auto-save effect: Whenever content changes, persist to localStorage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
   }, [content]);

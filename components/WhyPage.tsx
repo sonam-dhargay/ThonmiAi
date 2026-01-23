@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { TIBETAN_STRINGS } from '../constants';
 import Logo from './Logo';
 
-const STORAGE_KEY = 'bod_skyad_why_v3';
+const STORAGE_KEY = 'bod_skyad_why_v4';
 
 const WhyPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -24,7 +24,6 @@ const WhyPage: React.FC = () => {
     };
   });
 
-  // Auto-save effect
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
   }, [content]);
